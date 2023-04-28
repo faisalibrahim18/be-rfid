@@ -1,4 +1,4 @@
-const { signin } = require('../../../service/mongoose/auth');
+const { signin, logout } = require('../../../service/mongoose/auth');
 
 const { StatusCodes } = require('http-status-codes');
 
@@ -14,4 +14,16 @@ const signinUsers = async (req, res, next) => {
     }
 }
 
-module.exports = { signinUsers }
+const logoutUsers = async (req, res, next) => {
+    try {
+        await logout(req);
+
+        res.status(StatusCodes.OK).json({
+            message: 'logout successfully'
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { signinUsers, logoutUsers }

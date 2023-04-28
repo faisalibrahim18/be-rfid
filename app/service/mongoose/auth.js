@@ -1,6 +1,8 @@
 const Users = require('../../api/v1/users/model');
 const { BadRequestError, UnauthenticatedError } = require('../../errors');
 const { createTokenUser, createJWT } = require('../../utils');
+const jwt = require('jsonwebtoken');
+const { jwtSecret, jwtExpiration } = require('../../config');
 
 const signin = async (req, res, next) => {
     const { username, password } = req.body;
@@ -25,5 +27,14 @@ const signin = async (req, res, next) => {
 
     return token ;
 }
+const logout = async (req, res, next) => {
 
-module.exports = { signin }
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) throw new UnauthenticatedError('Unauthorized')
+
+    const decoded = jwt.verify(token, jwtSecret);
+
+    return decoded
+}
+module.exports = { signin, logout }

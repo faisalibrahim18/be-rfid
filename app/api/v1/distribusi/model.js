@@ -18,7 +18,8 @@ const distribusiSchema = Schema(
             required: true
         },
         status: {
-            type: String,
+            type: mongoose.Types.ObjectId,
+            ref: 'Tracker',
             required: true
         },
         dateIn: {

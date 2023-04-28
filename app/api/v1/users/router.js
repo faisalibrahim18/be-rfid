@@ -7,9 +7,9 @@ const {
     authhorizeRoles,
 } = require('../../../middlewares/auth');
 
-router.post('/user', create);
+router.post('/user', authenticateUser, authhorizeRoles('admin') ,create);
 
-router.get('/user', index);
+router.get('/user', authenticateUser, index);
 
 router.get('/user/:id', find);
 
