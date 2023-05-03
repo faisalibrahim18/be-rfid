@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express();
 const { create, index, find, update, destroy } = require('./controller');
+const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 
-router.post('/inventory', create );
 
-router.get('/inventory', index);
+router.post('/inventory', authenticateUser, authhorizeRoles('admin'),  create );
 
-router.get('/inventory/:id', find);
+router.get('/inventory', authenticateUser, authhorizeRoles('admin'), index);
 
-router.put('/inventory/:id', update);
+router.get('/inventory/:id', authenticateUser, authhorizeRoles('admin'), find);
 
-router.delete('/inventory/:id', destroy);
+router.put('/inventory/:id', authenticateUser, authhorizeRoles('admin'), update);
+
+router.delete('/inventory/:id', authenticateUser, authhorizeRoles('admin'), destroy);
 
 module.exports = router

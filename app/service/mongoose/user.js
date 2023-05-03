@@ -43,7 +43,10 @@ const createUser = async (req, res, next) => {
 
 const getAllUser = async (req) =>{
     const result = await User.find()
-    .select('_id name username role email')
+    .select('_id name username role email number_phone')
+
+    console.log(req.user.name)
+
     return result;
 }
 
@@ -51,7 +54,7 @@ const getOneUsers = async (req) => {
     const { id } = req.params;
 
     const result = await User.findOne({ _id: id})
-    .select('_id name username role email')
+    .select('_id name username role email number_phone')
 
     if (!result) throw new NotFoundError(`user not found for ${id}`)
 
@@ -112,10 +115,17 @@ const deleteUser = async (req) => {
     return result;
 }
 
+const getUserLogin = async (req) => {
+    const result = await User.findOne({ id: req.params.id });
+    
+    return result;
+}
+
 module.exports = {
     createUser,
     getAllUser,
     getOneUsers,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserLogin
 }

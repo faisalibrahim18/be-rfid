@@ -6,6 +6,7 @@ const { jwtSecret, jwtExpiration } = require('../../config');
 
 const signin = async (req, res, next) => {
     const { username, password } = req.body;
+    
 
     if (!username || !password) {
         throw new BadRequestError('Please provide username and password')

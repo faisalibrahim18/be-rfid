@@ -18,7 +18,7 @@ const authenticateUser = async (req, res, next) => {
 
         const payload = isTokenValid( { token } ) 
 
-        req.user = {
+        req.user= {
             email: payload.email,
             name: payload.name,
             role: payload.role,
@@ -34,8 +34,7 @@ const authenticateUser = async (req, res, next) => {
 const authhorizeRoles = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
-            throw new UnauthorizedError('Unauthorized to access this route')
-            
+            throw new UnauthorizedError('Unauthorized to access this route');          
         }
         next();
     }

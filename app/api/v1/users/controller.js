@@ -1,7 +1,7 @@
 const Users = require('./model');
 const { StatusCodes } = require('http-status-codes');
 
-const { createUser, getAllUser, getOneUsers, updateUser, deleteUser } = require('../../../service/mongoose/user')
+const { createUser, getAllUser, getOneUsers, updateUser, deleteUser, getUserLogin } = require('../../../service/mongoose/user')
 
 const create = async (req, res, next) => {
     try {
@@ -67,10 +67,23 @@ const destroy = async (req, res, next) => {
     }
 }
 
+const getUserSign = async (req, res, next) => {
+    try {
+        const result = await getUserLogin(req);
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     create,
     index,
     find,
     update,
-    destroy
+    destroy,
+    getUserLogin
 }

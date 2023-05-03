@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express();
-const { create, index, find, update, destroy } = require('./controller');
+const { create, index, find, update, destroy, getUserLogin } = require('./controller');
 
 const {
     authenticateUser,
@@ -17,4 +17,6 @@ router.put('/user/:id', update);
 
 router.delete('/user/:id', destroy);
 
-module.exports = router;
+router.get('/user/idUserSignedIn', getUserLogin)
+
+module.exports = router;    

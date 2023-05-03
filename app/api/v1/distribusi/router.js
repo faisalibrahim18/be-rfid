@@ -1,17 +1,19 @@
 const express = require('express');
 const router = express();
 const { create, index, update, find, destroy, download } = require('./controler');
+const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 
-router.post('/distribusi', create);
 
-router.get('/distribusi', index);
+router.post('/distribusi', authenticateUser, authhorizeRoles('admin'), create);
 
-router.get('/distribusi/:id', find);
+router.get('/distribusi', authenticateUser, authhorizeRoles('admin'), index);
 
-router.put('/distribusi/:id', update);
+router.get('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), find);
 
-router.delete('/distribusi/:id', destroy);
+router.put('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), update);
 
-router.get('/distribusiDownload', download)
+router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), destroy);
+
+router.get('/distribusiDownload', authenticateUser, authhorizeRoles('admin'), download);
 
 module.exports = router;
