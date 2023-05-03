@@ -4,24 +4,16 @@ const { NotFoundError, BadRequestError } = require('../../errors');
 
 const createHospital = async (req, res, next) => {
     const {
+        code,
         name,
-        email,
         number_phone,
-        service,
         address,
-        postcode,
-        pick_up,
-        delivery,
-        notes
+        
     } = req.body;
 
     const checkName = await Hospital.findOne({ name: name });
 
     if (checkName) throw new BadRequestError('name has been registered already');
-
-    const checkEmail = await Hospital.findOne({ email: email });
-
-    if (checkEmail) throw new BadRequestError('email has been registered');
 
     const checkNumberPhone = await Hospital.findOne({ number_phone: number_phone });
 
@@ -29,14 +21,9 @@ const createHospital = async (req, res, next) => {
 
     const result = await Hospital.create({
         name,
-        email,
+        code,
         number_phone,
-        service,
         address,
-        postcode,
-        pick_up,
-        delivery,
-        notes
     });
 
     return result
@@ -66,14 +53,9 @@ const updateHospital = async (req, res, next) => {
     const { id } = req.params;
     const {
         name,
-        email,
+        code,
         number_phone,
-        service,
         address,
-        postcode,
-        pick_up,
-        delivery,
-        notes
     } = req.body
 
     const checkName = await Hospital.findOne({
@@ -99,14 +81,9 @@ const updateHospital = async (req, res, next) => {
         { _id: id },
         {
             name,
-            email,
+            code,
             number_phone,
-            service,
             address,
-            postcode,
-            pick_up,
-            delivery,
-            notes
         },
         { new: true, runValidators: true }
     );
