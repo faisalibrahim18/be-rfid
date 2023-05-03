@@ -78,13 +78,6 @@ const updateUser = async (req) => {
     })
     if (checkUsername) throw new BadRequestError('username has been registered');
 
-    const checkEmail = await User.findOne({
-        email,
-        _id : { $ne: id }, 
-    })
-
-    if (checkEmail) throw new BadRequestError('email has been registered');
-
     const checkNumberPhone = await User.findOne({
         number_phone,
         _id : { $ne: id },

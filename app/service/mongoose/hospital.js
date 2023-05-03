@@ -7,8 +7,7 @@ const createHospital = async (req, res, next) => {
         code,
         name,
         number_phone,
-        address,
-        
+        address,    
     } = req.body;
 
     const checkName = await Hospital.findOne({ name: name });
@@ -32,7 +31,7 @@ const createHospital = async (req, res, next) => {
 const getAllHospital = async (req, res, next) => {
     const result = await Hospital.findOne()
         .select(
-            '_id name email number_phone service address postcode pick_up delivery notes'
+            '_id name code number_phone address'
         )
     if (!result) throw new NotFoundError('Hospital Not Found');
 
@@ -43,7 +42,7 @@ const getOneHospital = async (req, res, next) => {
     const { id } = req.params;
     const result = await Hospital.findOne({ _id: id })
         .select(
-            '_id name email number_phone service address postcode pick_up delivery notes'
+            '_id code name  number_phone  address '
         )
     if (!result) throw new NotFoundError('Hospital Not Found');
     return result;
@@ -62,15 +61,8 @@ const updateHospital = async (req, res, next) => {
         name,
         _id: { $ne: id },
     })
-    if (checkName) throw new BadRequestError('username has been registered');
-
-    const checkEmail = await Hospital.findOne({
-        email,
-        _id: { $ne: id },
-    })
-
-    if (checkEmail) throw new BadRequestError('email has been registered');
-
+    if (checkName) throw new BadRequestError('name has been registered');
+u
     const checkNumberPhone = await Hospital.findOne({
         number_phone,
         _id: { $ne: id },

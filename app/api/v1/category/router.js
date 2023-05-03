@@ -4,14 +4,14 @@ const { create, index, find, update, destroy } = require('./controller');
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 
 
-router.post('/category', authenticateUser, authhorizeRoles('admin'), create);
+router.post('/category', create);
 
-router.get('/category', authenticateUser, authhorizeRoles('admin'), index);
+router.get('/category', index);
 
-router.get('/category/:id', authenticateUser, authhorizeRoles('admin'), find);
+router.get('/category/:id', find);
 
-router.put('/category/:id', authenticateUser, authhorizeRoles('admin'), update);
+router.put('/category/:id', update);
 
-router.delete('/category/:id', authenticateUser, authhorizeRoles('admin'), destroy);
+router.delete('/category/:id', destroy);
 
 module.exports = router;

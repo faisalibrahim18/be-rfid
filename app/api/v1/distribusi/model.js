@@ -13,6 +13,10 @@ const distribusiSchema = Schema(
             ref: 'Category',
             required: true
         },
+        service :{
+            type: String,
+            required: true
+        },
         quality: {
             type: String,
             required: true
@@ -32,6 +36,14 @@ const distribusiSchema = Schema(
         },
         amount: {
             type:Number,
+            required: true
+        },
+        weight: {
+            type: String,
+            required: true
+        },
+        note : {
+            type : String,
             required: true
         }
     },

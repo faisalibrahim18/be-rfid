@@ -4,16 +4,16 @@ const { create, index, update, find, destroy, download } = require('./controler'
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 
 
-router.post('/distribusi', authenticateUser, authhorizeRoles('admin'), create);
+router.post('/distribusi',  create);
 
-router.get('/distribusi', authenticateUser, authhorizeRoles('admin'), index);
+router.get('/distribusi',  index);
 
-router.get('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), find);
+router.get('/distribusi/:id',  find);
 
-router.put('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), update);
+router.put('/distribusi/:id',  update);
 
-router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), destroy);
+router.delete('/distribusi/:id',  destroy);
 
-router.get('/distribusiDownload', authenticateUser, authhorizeRoles('admin'), download);
+router.get('/distribusiDownload', download);
 
 module.exports = router;

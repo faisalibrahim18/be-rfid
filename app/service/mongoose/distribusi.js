@@ -3,16 +3,19 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const { checkHospital } = require('./hospital');
 const { checkCategory } =require('./category');
 const { checkStatus } = require('./tracker');
- 
+
 const createDistribusi = async (req, res, next) => {
     const { 
         customer,
         category,
         quality,
         status,
+        service,
         dateIn,
         dateOut,
+        weight,
         amount,
+        note
     } = req.body;
 
     await checkCategory(category);
@@ -23,10 +26,13 @@ const createDistribusi = async (req, res, next) => {
         customer,
         category,
         quality,
+        service,
         status ,
         dateIn,
         dateOut,
         amount,
+        weight,
+        note
     });
 
     return result;
@@ -46,7 +52,7 @@ const getAllDistribusi = async (req, res, next) => {
     const result  = await Distribusi.find(condition)
     .populate({
         path: 'customer',
-        select: '_id name email number_phone service address postcode pick_up delivery notes'
+        select: '_id name  number_phone  address'
 
     })
     .populate({
@@ -80,11 +86,14 @@ const updateDistribusi = async (req, res, next) => {
     const { 
         customer,
         category,
+        service,
         quality,
         status,
         dateIn,
         dateOut,
         amount,
+        weight,
+        note
     } = req.body;
 
     const result = await Distribusi.findByIdAndUpdate(
@@ -93,10 +102,13 @@ const updateDistribusi = async (req, res, next) => {
             customer,
             category,
             quality,
+            service,
             status,
             dateIn,
             dateOut,
             amount,
+            weight,
+            note
         },
         { new: true, runValidators: true }
     )
