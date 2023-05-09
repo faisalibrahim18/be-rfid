@@ -16,18 +16,18 @@ const {
 
 // router.get('/tracker', index)
 
-router.post('/tracker',      create);
+router.post('/tracker', create);
 
-router.put('/tracker/checking/:id',      checking);
+router.put('/tracker/checking/:id', authenticateUser, authhorizeRoles('admin'),  checking);
 
-router.put('/tracker/transit/:id',   transit);
+router.put('/tracker/transit/:id', authenticateUser, authhorizeRoles('admin'), transit);
 
-router.put('/tracker/accepted/:id',  accepted);
+router.put('/tracker/accepted/:id', authenticateUser, authhorizeRoles('admin'), accepted);
 
-router.put('/tracker/wash/:id',  wash);
+router.put('/tracker/wash/:id', authenticateUser, authhorizeRoles('admin'), wash);
 
-router.put('/tracker/dry/:id',   dry);
+router.put('/tracker/dry/:id',  authenticateUser, authhorizeRoles('admin'), dry);
 
-router.put('/tracker/done/:id',  done);
+router.put('/tracker/done/:id', authenticateUser, authhorizeRoles('admin'),  done);
 
 module.exports = router;

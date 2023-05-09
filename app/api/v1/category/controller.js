@@ -1,4 +1,4 @@
-const { createCategory, getAllCategory, getOneCategory, updateCategory, deleteCategory } = require('../../../service/mongoose/category');
+const { createCategory, getAllCategory, getOneCategory, updateCategory, deleteCategory, countCategory } = require('../../../service/mongoose/category');
 const { StatusCodes } = require('http-status-codes');
 
 const create = async (req, res, next) => {
@@ -61,4 +61,14 @@ const destroy = async (req, res, next) => {
     }
 }
 
-module.exports = { create, index, find, update, destroy }
+const count = async (req, res, next)=>{
+    try {
+        const result = await countCategory();
+
+        res.json({ data: result });
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { create, index, find, update, destroy, count}

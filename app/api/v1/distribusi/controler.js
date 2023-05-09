@@ -90,10 +90,12 @@ const download = async (req, res, next) => {
             { header: 'Customer', key: 'customer', width: 30, alignment: { horizontal: 'middle' } },
             { header: 'Category', key: 'category', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Quality', key: 'quality', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Service', key: 'service', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Status', key: 'status', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Date In', key: 'dateIn', width: 15, alignment: { horizontal: 'middle' } },
             { header: 'Date Out', key: 'dateOut', width: 15, alignment: { horizontal: 'middle' } },
-            { header: 'Amount', key: 'amount', width: 10, alignment: { horizontal: 'middle' } }
+            { header: 'Amount', key: 'amount', width: 10, alignment: { horizontal: 'middle' } },
+            { header: 'Weight', key: 'weight', width: 10, alignment: { horizontal: 'middle' } },
         ];
 
         worksheet.getRow(1).fill = {
@@ -114,17 +116,19 @@ const download = async (req, res, next) => {
         });
 
         result.forEach((item) => {
-
             worksheet.addRow({
                 customer: item.customer.name,
                 category: item.category.name,
                 quality: item.quality,
+                service: item.service,
                 status: item.status.status,
                 dateIn: item.dateIn,
                 dateOut: item.dateOut,
-                amount: item.amount
-            })
-        })
+                amount: item.amount,
+                weight: item.weight,
+                note: item.note
+            });
+        });
 
 
         await workbook.xlsx.writeFile('data.xlsx');

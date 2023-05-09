@@ -90,11 +90,18 @@ const checkCategory = async (id) => {
     return result
 }
 
+const countCategory = async () => {
+    const result = await Category.find().count();
+
+    return result;
+}
+
 module.exports = { 
     createCategory,
     getAllCategory,
     getOneCategory,
     updateCategory,
     deleteCategory,
-    checkCategory
+    checkCategory,
+    countCategory
 }

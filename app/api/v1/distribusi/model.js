@@ -13,6 +13,11 @@ const distribusiSchema = Schema(
             ref: 'Category',
             required: true
         },
+        linen : {
+            type: mongoose.Types.ObjectId,
+            ref: 'Linen',
+            required: true
+        },
         service :{
             type: String,
             required: true
@@ -23,8 +28,7 @@ const distribusiSchema = Schema(
         },
         status: {
             type: mongoose.Types.ObjectId,
-            ref: 'Tracker',
-            required: true
+            ref: 'Tracker'
         },
         dateIn: {
             type: Date,

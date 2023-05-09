@@ -62,4 +62,12 @@ const deleteLinen = async (req) => {
     
     return result;
 }
-module.exports = { createLinen, getAllLinen, getOneLinen, updateLinen, deleteLinen };
+
+
+const checkLinen = async (id) => {
+    const result = await Linen.findOne({ _id : id})
+
+    if (!result) throw new NotFoundError('Linen id not found');
+    return result
+}
+module.exports = { createLinen, getAllLinen, getOneLinen, updateLinen, deleteLinen, checkLinen };

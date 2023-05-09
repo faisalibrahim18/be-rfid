@@ -1,15 +1,16 @@
 const Distribusi = require('../../api/v1/distribusi/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
 const { checkHospital } = require('./hospital');
-const { checkCategory } =require('./category');
+const { checkCategory } = require('./category');
 const { checkStatus } = require('./tracker');
+const { checkLinen } = require('./linen');
 
 const createDistribusi = async (req, res, next) => {
-    const { 
+    const {
         customer,
         category,
         quality,
-        status,
+        linen,
         service,
         dateIn,
         dateOut,
@@ -20,14 +21,15 @@ const createDistribusi = async (req, res, next) => {
 
     await checkCategory(category);
     await checkHospital(customer);
-    await checkStatus(status);
+    await checkLinen(linen);
+
 
     const result = await Distribusi.create({
         customer,
         category,
         quality,
+        linen,
         service,
-        status ,
         dateIn,
         dateOut,
         amount,
@@ -43,27 +45,32 @@ const getAllDistribusi = async (req, res, next) => {
     let condition = {};
 
     if (dateIn) {
-        condition = { ...condition, dateIn: dateIn }
+        condition.dateIn = { $gte: new Date(dateIn) };
     }
     if (dateOut) {
-        condition = { ...condition, dateOut: dateOut }
+        condition.dateOut = { $lte: new Date(dateOut) };
     }
 
-    const result  = await Distribusi.find(condition)
-    .populate({
-        path: 'customer',
-        select: '_id name  number_phone  address'
 
-    })
-    .populate({
-        path: 'category',
-        select: 'id name'
-    })
-    .populate({
-        path: 'status',
-        select: 'status checking transit accepted wash dry done'
-    })
-    .select('customer category quality status dateIn dateOut amount')
+    const result = await Distribusi.find(condition)
+        .populate({
+            path: 'customer',
+            select: '_id name  number_phone  address'
+
+        })
+        .populate({
+            path: 'category',
+            select: 'id name'
+        })
+        .populate({
+            path: 'linen',
+            select: 'name'
+        })
+        .populate({
+            path: 'status',
+            select: 'status'
+        })
+        .select('customer category linen quality service status dateIn dateOut amount weight note')
 
     if (!result) throw new NotFoundError('Distribusi Not Found')
 
@@ -73,8 +80,8 @@ const getAllDistribusi = async (req, res, next) => {
 const getOneDistribusi = async (req, res, next) => {
     const { id } = req.params;
 
-    const result = await Distribusi.findOne({ _id: id})
-    .select('customer category quality status dateIn dateOut amount')
+    const result = await Distribusi.findOne({ _id: id })
+        .select('customer category linen quality service status dateIn dateOut amount weight note')
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
@@ -83,9 +90,10 @@ const getOneDistribusi = async (req, res, next) => {
 
 const updateDistribusi = async (req, res, next) => {
     const { id } = req.params;
-    const { 
+    const {
         customer,
         category,
+        linen,
         service,
         quality,
         status,
@@ -96,12 +104,15 @@ const updateDistribusi = async (req, res, next) => {
         note
     } = req.body;
 
+    await checkStatus(status)
+
     const result = await Distribusi.findByIdAndUpdate(
         { _id: id },
-        {  
+        {
             customer,
             category,
             quality,
+            linen,
             service,
             status,
             dateIn,
@@ -111,25 +122,25 @@ const updateDistribusi = async (req, res, next) => {
             note
         },
         { new: true, runValidators: true }
-    )
+    );
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
-    
+
     return result
 }
 
 const deleteDistrbusi = async (req, res, next) => {
     const { id } = req.params;
 
-    const result =  await Distribusi.findByIdAndDelete({ _id: id})
-    
+    const result = await Distribusi.findByIdAndDelete({ _id: id })
+
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
     return result
 }
 
 const downloadDistribusi = async (req, res, next) => {
-    
+
 }
 
-module.exports = {createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, downloadDistribusi};
+module.exports = { createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, downloadDistribusi };
