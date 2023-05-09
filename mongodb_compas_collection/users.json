@@ -1,0 +1,40 @@
+[{
+  "_id": {
+    "$oid": "6437816fc4b1d0a12b90bf5c"
+  },
+  "name": "Fajar Muhammad Afrizal",
+  "username": "fajarafrizal",
+  "password": "$2a$12$RxRi8zhaZEOm3mHb5lI5OOhNHxLn3/M.972cy/dtJlW8BppCsbWpq",
+  "email": "fajarafrizal@gmail.com",
+  "number_phone": "085389769984",
+  "role": "admin",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "643794c39c94d8a54ca402cb"
+  },
+  "name": "Raden Rafly Pradana Kusumah",
+  "username": "raplipradana",
+  "password": "$2a$12$CQydfGj.MoTY3gyum.4Eh.3JBZuAmOC/PHjOk24ySpIAAAj58ngXK",
+  "email": "nihao@gmail.com",
+  "number_phone": "0899847783",
+  "role": "admin",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6449ddfacbda88b73c33837e"
+  },
+  "name": "Raden Rafly Pradana Kusumah",
+  "username": "raplipradanas",
+  "password": "$2a$12$vMigucZxyshs5p.8f6rjsOXYX8XOUKyjV7qWsco12pkm8dpiL4Mya",
+  "email": "nihao@gmail.coms",
+  "number_phone": 899847783,
+  "role": "user",
+  "createdAt": {
+    "$date": "2023-04-27T02:29:14.363Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-27T02:29:14.363Z"
+  },
+  "__v": 0
+}]

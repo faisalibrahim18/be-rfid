@@ -45,7 +45,6 @@ const getAllUser = async (req) =>{
     const result = await User.find()
     .select('_id name username role email number_phone')
 
-    console.log(req.user.name)
 
     return result;
 }

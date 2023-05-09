@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "6451e2aabf37c8d049f527af"
+  },
+  "name": "RS Medika",
+  "number_phone": {
+    "$numberLong": "85948488484"
+  },
+  "address": "Jl Babakan rt05/01 kecamatan sukamajus",
+  "code": "ks202",
+  "createdAt": {
+    "$date": "2023-05-03T04:27:22.128Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-03T04:27:22.128Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6451e2b1bf37c8d049f527b3"
+  },
+  "name": "RS Medika3",
+  "number_phone": {
+    "$numberLong": "859484884843"
+  },
+  "address": "Jl Babakan rt05/01 kecamatan sukamajus",
+  "code": "ks202",
+  "createdAt": {
+    "$date": "2023-05-03T04:27:29.800Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-03T04:27:29.800Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6451e2bbbf37c8d049f527b7"
+  },
+  "name": "RS Medikad",
+  "number_phone": {
+    "$numberLong": "8594848848433"
+  },
+  "address": "Jl Babakan rt05/01 kecamatan sukamajus",
+  "code": "ks202",
+  "createdAt": {
+    "$date": "2023-05-03T04:27:39.384Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-03T04:27:39.384Z"
+  },
+  "__v": 0
+}]

@@ -1,0 +1,144 @@
+[{
+  "_id": {
+    "$oid": "6452173c3d120eeffcfb4428"
+  },
+  "status": "checking",
+  "__v": 0,
+  "checking": {
+    "name": "fajar",
+    "email": "fajar@gmail.com",
+    "no_hp": "8699588744",
+    "amount": 898,
+    "heavy": "45 KG",
+    "note": "alhamdulillah",
+    "_id": {
+      "$oid": "6452192e9ac8793492f4cdce"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "64546d525d00b500a17c8a01"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d5f5d00b500a17c8a03"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d605d00b500a17c8a05"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d615d00b500a17c8a07"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d635d00b500a17c8a09"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d6c5d00b500a17c8a0b"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d6d5d00b500a17c8a0d"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d6d5d00b500a17c8a0f"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64546d715d00b500a17c8a11"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645472b15d00b500a17c8a13"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645472ca5d00b500a17c8a15"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645473295d00b500a17c8a1f"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645473635d00b500a17c8a26"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6459ae0e87d8a899722798e2"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6459ae0f87d8a899722798e6"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6459ae6987d8a899722798ee"
+  },
+  "status": "processing",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6459ae7d87d8a899722798f2"
+  },
+  "status": "transit",
+  "__v": 0,
+  "checking": {
+    "name": "fajar",
+    "email": "fajar@gmail.com",
+    "no_hp": "8699588744",
+    "amount": 898,
+    "heavy": "45 KG",
+    "note": "alhamdulillah",
+    "_id": {
+      "$oid": "6459afad2fb4e0c6e5e7957f"
+    }
+  },
+  "transit": {
+    "name": "fajar",
+    "email": "fajar@gmail.com",
+    "no_hp": "8699588744",
+    "vehicle": "motor",
+    "license": "B 2302 UGV",
+    "amount": 345,
+    "heavy": "45 KG",
+    "note": "halo",
+    "_id": {
+      "$oid": "6459afd52fb4e0c6e5e79586"
+    }
+  }
+}]
