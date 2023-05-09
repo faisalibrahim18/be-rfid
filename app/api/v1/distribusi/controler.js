@@ -114,14 +114,16 @@ const download = async (req, res, next) => {
                 }
             };
         });
+        
 
         result.forEach((item) => {
+            const statusValue = item.status ? item.status.status : '-';
             worksheet.addRow({
                 customer: item.customer.name,
                 category: item.category.name,
                 quality: item.quality,
                 service: item.service,
-                status: item.status.status,
+                status: statusValue,
                 dateIn: item.dateIn,
                 dateOut: item.dateOut,
                 amount: item.amount,
