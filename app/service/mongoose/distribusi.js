@@ -68,7 +68,7 @@ const getAllDistribusi = async (req, res, next) => {
         })
         .populate({
             path: 'status',
-            select: 'status'
+            select: 'status checking transit accepted wash dry done'
         })
         .select('customer category linen quality service status dateIn dateOut amount weight note')
 
