@@ -49,7 +49,7 @@ const getAllDistribusi = async (req, res, next) => {
         condition.dateIn = { $gte: new Date(dateIn) };
     }
     if (dateOut) {
-        condition.dateOut = { $gte: new Date(dateOut) };
+        condition.dateOut = { $lte: new Date(dateOut) };
     }
 
 
