@@ -34,7 +34,8 @@ const createDistribusi = async (req, res, next) => {
         dateOut,
         amount,
         weight,
-        note
+        note,
+        status: null
     });
 
     return result;
@@ -48,7 +49,7 @@ const getAllDistribusi = async (req, res, next) => {
         condition.dateIn = { $gte: new Date(dateIn) };
     }
     if (dateOut) {
-        condition.dateOut = { $lte: new Date(dateOut) };
+        condition.dateOut = { $gte: new Date(dateOut) };
     }
 
 
