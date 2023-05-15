@@ -108,8 +108,10 @@ const deleteUser = async (req) => {
 }
 
 const getUserLogin = async (req) => {
-    const result = await User.findOne({ id: req.params.id });
-    
+    const result = await User.findOne({ _id: req.user.id });
+
+    if (!result) throw new NotFoundError('User not found');
+
     return result;
 }
 

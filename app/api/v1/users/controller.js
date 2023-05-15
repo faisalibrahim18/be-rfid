@@ -85,5 +85,5 @@ module.exports = {
     find,
     update,
     destroy,
-    getUserLogin
+    getUserSign
 }

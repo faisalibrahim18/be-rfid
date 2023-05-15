@@ -1,22 +1,22 @@
 const express = require('express');
 const router = express();
-const { create, index, find, update, destroy, getUserLogin } = require('./controller');
+const { create, index, find, update, destroy, getUserSign } = require('./controller');
 
 const {
     authenticateUser,
     authhorizeRoles,
 } = require('../../../middlewares/auth');
 
-router.post('/user',  authenticateUser, authhorizeRoles('admin') ,create);
+router.post('/user',authenticateUser, authhorizeRoles('admin') ,create);
 
 router.get('/user', authenticateUser, authhorizeRoles('admin'), authenticateUser, index);
 
 router.get('/user/:id', find);
 
-router.put('/user/:id', update);
+router.put('/user/:id', authenticateUser, update);
 
 router.delete('/user/:id', destroy);
 
-router.get('/user/idUserSignedIn', getUserLogin)
+router.get('/getUserSignedIn', authenticateUser, getUserSign)
 
 module.exports = router;    

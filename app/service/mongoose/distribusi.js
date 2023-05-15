@@ -105,7 +105,6 @@ const updateDistribusi = async (req, res, next) => {
         note
     } = req.body;
 
-    await checkStatus(status)
 
     const result = await Distribusi.findByIdAndUpdate(
         { _id: id },

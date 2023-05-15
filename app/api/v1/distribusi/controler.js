@@ -70,19 +70,8 @@ const destroy = async (req, res, next) => {
 
 const download = async (req, res, next) => {
     try {
-        const result = await Distribusi.find()
-            .populate({
-                path: 'category',
-                select: 'name'
-            })
-            .populate({
-                path: 'customer',
-                select: 'name'
-            })
-            .populate({
-                path: 'status',
-                select: 'status'
-            })
+        const result = await getAllDistribusi(req)
+           
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('data');
 

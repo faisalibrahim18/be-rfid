@@ -62,7 +62,7 @@ const updateHospital = async (req, res, next) => {
         _id: { $ne: id },
     })
     if (checkName) throw new BadRequestError('name has been registered');
-u
+
     const checkNumberPhone = await Hospital.findOne({
         number_phone,
         _id: { $ne: id },

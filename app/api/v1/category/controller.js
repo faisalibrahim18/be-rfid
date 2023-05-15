@@ -40,12 +40,17 @@ const find = async (req, res, next) => {
 }
 
 const update = async (req, res, next) => {
-    const result = await updateCategory(req);
+    try{
+        const result = await updateCategory(req);
 
-    res.status(StatusCodes.OK).json({
-        message: 'update category successfully',
-        data: result
-    })
+        res.status(StatusCodes.OK).json({
+            message: 'update category successfully',
+            data: result
+        })
+    } catch (err){
+        next(err);
+    }
+   
 }
 
 const destroy = async (req, res, next) => {
