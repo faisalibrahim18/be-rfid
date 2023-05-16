@@ -7,7 +7,8 @@ const {
     accepted,
     wash,
     dry,
-    done
+    done,
+    find
 } = require('./controller')
 const {
     authenticateUser,
@@ -18,7 +19,7 @@ const {
 
 router.post('/tracker', create);
 
-router.get('/tracker/:id', create);
+router.get('/tracker/:id', find);
 
 router.put('/tracker/checking/:id', authenticateUser, authhorizeRoles('admin'),  checking);
 

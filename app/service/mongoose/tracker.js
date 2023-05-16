@@ -12,6 +12,8 @@ const createTracker = async (req) => {
 }
 
 const getOneTracker = async (req) => {
+
+    const { id } = req.params
     const result = await Tracker.findOne({_id : id})
     .select('status checking transit accepted wash dry done');
 
