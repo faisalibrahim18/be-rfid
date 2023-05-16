@@ -28,6 +28,7 @@ const signin = async (req, res, next) => {
 
     return token ;
 }
+
 const logout = async (req, res, next) => {
 
     const authHeader = req.headers['authorization'];

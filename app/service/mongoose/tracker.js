@@ -11,6 +11,15 @@ const createTracker = async (req) => {
     return result
 }
 
+const getOneTracker = async (req) => {
+    const result = await Tracker.findOne({_id : id})
+    .select('status checking transit accepted wash dry done');
+
+    if (!result) throw new BadRequestError('id not found')
+
+    return result;
+}
+
 const chekingTracker = async (req) => {
     const { id } = req.params;
 
@@ -54,7 +63,7 @@ const transitTracker = async (req) => {
 const acceptedTracker = async (req) => {
     const { id } = req.params;
 
-    const{
+    const {
         accepted
     } = req.body;
 
@@ -151,5 +160,6 @@ module.exports = {
     acceptedTracker,
     washTracker,
     dryTracker,
-    doneTracker
+    doneTracker,
+    getOneTracker
 }

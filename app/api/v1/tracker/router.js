@@ -18,6 +18,8 @@ const {
 
 router.post('/tracker', create);
 
+router.get('/tracker/:id', create);
+
 router.put('/tracker/checking/:id', authenticateUser, authhorizeRoles('admin'),  checking);
 
 router.put('/tracker/transit/:id', authenticateUser, authhorizeRoles('admin'), transit);
