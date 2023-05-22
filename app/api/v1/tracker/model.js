@@ -186,6 +186,7 @@ const trackingSchema = Schema(
         },
         checking: {
             type: chekingSchema,
+    
         },
         transit: {
             type: transitSchema, 

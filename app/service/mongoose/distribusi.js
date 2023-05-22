@@ -5,6 +5,11 @@ const { checkCategory } = require('./category');
 const { checkStatus } = require('./tracker');
 const { checkLinen } = require('./linen');
 
+const ejs = require('ejs');
+const pdf = require('html-pdf');
+const fs = require('fs');
+const path = require('path');
+
 const createDistribusi = async (req, res, next) => {
     const {
         customer,
@@ -139,8 +144,51 @@ const deleteDistrbusi = async (req, res, next) => {
     return result
 }
 
-const downloadDistribusi = async (req, res, next) => {
+// const downloadPDF = async (req, res) => {
+//     try {
 
-}
+//         const distrubusi = await Distribusi.find()
+//         .populate({
+//             path: 'customer',
+//             select: '_id name  number_phone  address'
 
-module.exports = { createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, downloadDistribusi };
+//         })
+//         .populate({
+//             path: 'category',
+//             select: 'id name'
+//         })
+//         .populate({
+//             path: 'linen',
+//             select: 'name'
+//         })
+//         .populate({
+//             path: 'status',
+//             select: 'status checking transit accepted wash dry done'
+//         })
+//         .select('customer category linen quality service status dateIn dateOut amount weight note')
+
+//         const data = {
+//             distrubusi:distrubusi
+//         }
+//         const filePathName = path.resolve(__dirname, '../../../public/pdf/distribusi.ejs');
+//         const htmlString = fs.readFileSync(filePathName).toString();
+//         const ejsData = ejs.render(htmlString, data);
+
+//         const options = {
+//             format: 'Letter'
+//         }
+
+//         pdf.create(ejsData, options).toFile('distribusi.pdf', (err, response) => {
+//             if (err) console.log(err)
+
+//             console.log('file generated')
+//         })
+
+//     } catch (err) {
+
+//         console.log(err.message);
+
+//     }
+// }
+
+module.exports = { createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi,  };

@@ -1,7 +1,12 @@
-const { createDistribusi, downloadDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi } = require('../../../service/mongoose/distribusi');
+const { createDistribusi, downloadDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, downloadPDF } = require('../../../service/mongoose/distribusi');
 const { StatusCodes } = require('http-status-codes');
 const Distribusi = require('./model');
 const ExcelJS = require('exceljs');
+
+const ejs = require('ejs');
+const pdf = require('html-pdf');
+const fs = require('fs');
+const path = require('path');
 
 
 const create = async (req, res, next) => {
@@ -71,7 +76,7 @@ const destroy = async (req, res, next) => {
 const download = async (req, res, next) => {
     try {
         const result = await getAllDistribusi(req)
-           
+
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('data');
 
@@ -103,7 +108,7 @@ const download = async (req, res, next) => {
                 }
             };
         });
-        
+
 
         result.forEach((item) => {
             const statusValue = item.status ? item.status.status : '-';
@@ -117,7 +122,6 @@ const download = async (req, res, next) => {
                 dateOut: item.dateOut,
                 amount: item.amount,
                 weight: item.weight,
-                note: item.note
             });
         });
 
@@ -129,6 +133,46 @@ const download = async (req, res, next) => {
         next(err)
     }
 }
+const downloadDistribusiPDF = async (req, res, next) => {
+    try {
+        const distribusi = await getAllDistribusi(req)
+            
+        const data = {
+            distribusi: distribusi
+        };
+        const filePathName = path.resolve(__dirname, '../../../../public/pdf/distribusi.ejs');
+        const htmlString = fs.readFileSync(filePathName).toString();
+        const ejsData = ejs.render(htmlString, data);
+
+        const options = {
+            format: 'Letter'
+        };
+
+        pdf.create(ejsData, options).toFile('distribusi.pdf', (err, response) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send('Failed to generate PDF');
+            }
+
+            const filePath = path.resolve(__dirname, '../../../../distribusi.pdf')
+
+            fs.readFile(filePath,(err, file) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not download PDF');
+                }
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', 'attachment;filename="distribusi.pdf"');
+
+                res.send(file);
+            });
+        });
+    } catch (err) {
+        console.log(err.message);
+        return res.status(500).send('Failed to generate PDF');
+    }
+};
+
 
 module.exports = {
     create,
@@ -136,5 +180,6 @@ module.exports = {
     update,
     index,
     destroy,
-    download
+    download,
+    downloadDistribusiPDF
 }

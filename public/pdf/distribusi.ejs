@@ -1,0 +1,48 @@
+<h1>Distribusi</h1>
+
+<table width="50%">
+    <tr>
+        <th style="border: 1px solid black; padding: 8px;">Customer</th>
+        <th style="border: 1px solid black; padding: 8px;">Category</th>
+        <th style="border: 1px solid black; padding: 8px;">Quality</th>
+        <th style="border: 1px solid black; padding: 8px;">Service</th>
+        <th style="border: 1px solid black; padding: 8px;">Status</th>
+        <th style="border: 1px solid black; padding: 8px;">Date In</th>
+        <th style="border: 1px solid black; padding: 8px;">Date Out</th>
+        <th style="border: 1px solid black; padding: 8px;">Amount</th>
+        <th style="border: 1px solid black; padding: 8px;">Weight</th>
+    </tr>
+
+    <% distribusi.forEach((item) => { %>
+        <% const statusValue = item.status ? item.status.status : '-'; %>
+        <tr>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.customer.name %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.category.name %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.quality %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.service %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= statusValue %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.dateIn.toLocaleDateString() %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.dateOut.toLocaleDateString() %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.amount %>
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                <%= item.weight %>
+            </td>
+        </tr>
+    <% }); %>
+</table>

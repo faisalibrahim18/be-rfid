@@ -29,6 +29,14 @@ const chekingTracker = async (req) => {
         checking
     } = req.body;
 
+    const tracker = await Tracker.findById(id);
+
+    if (!tracker) throw new NotFoundError('Tracker not found');
+
+    if (tracker.status === 'transit' || tracker.status === 'accepted' || tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
+        throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
+    }
+
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
@@ -49,6 +57,14 @@ const transitTracker = async (req) => {
         transit
     } = req.body;
 
+    const tracker = await Tracker.findById(id);
+
+    if (!tracker) throw new NotFoundError('Tracker not found');
+
+    if (tracker.status === 'accepted' || tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
+        throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
+    }
+
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
@@ -68,6 +84,14 @@ const acceptedTracker = async (req) => {
     const {
         accepted
     } = req.body;
+
+    const tracker = await Tracker.findById(id);
+
+    if (!tracker) throw new NotFoundError('Tracker not found');
+
+    if (tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
+        throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
+    }
 
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
@@ -90,6 +114,14 @@ const washTracker = async (req) => {
         wash
     } = req.body;
 
+    const tracker = await Tracker.findById(id);
+
+    if (!tracker) throw new NotFoundError('Tracker not found');
+
+    if (tracker.status === 'drying' || tracker.status === 'success') {
+        throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
+    }
+
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {   
@@ -111,6 +143,13 @@ const dryTracker = async (req) => {
         dry
     } = req.body;
 
+    const tracker = await Tracker.findById(id);
+
+    if (!tracker) throw new NotFoundError('Tracker not found');
+
+    if (tracker.status === 'success') {
+        throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
+    }
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
