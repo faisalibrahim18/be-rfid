@@ -102,4 +102,10 @@ const checkHospital = async (id) => {
     return result;
 }
 
-module.exports = { createHospital, getAllHospital, getOneHospital, updateHospital, deleteHospital, checkHospital }
+const countHospital = async (req) => {
+    const result = await Hospital.find().count()
+
+    return result;
+}
+
+module.exports = { createHospital, getAllHospital, getOneHospital, updateHospital, deleteHospital, checkHospital, countHospital }

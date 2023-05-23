@@ -16,6 +16,7 @@ const getOneTracker = async (req) => {
     const { id } = req.params
     const result = await Tracker.findOne({_id : id})
     .select('status checking transit accepted wash dry done');
+    console.log(result.createdAt)
 
     if (!result) throw new BadRequestError('id not found')
 
@@ -42,7 +43,6 @@ const chekingTracker = async (req) => {
         {
             checking,
             status: 'checking',
-            
         },
         { new: true, runValidators: true }
     )
@@ -189,6 +189,8 @@ const checkStatus = async (id) => {
     const result = await Tracker.findById({
         _id: id
     })
+
+ 
     if (!result) throw new NotFoundError('Status id not found');
     return result;
 }

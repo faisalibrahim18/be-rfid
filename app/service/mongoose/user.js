@@ -115,11 +115,18 @@ const getUserLogin = async (req) => {
     return result;
 }
 
+const countUsers = async (req) => {
+    const result = await User.find().count()
+
+    return result
+}
+
 module.exports = {
     createUser,
     getAllUser,
     getOneUsers,
     updateUser,
     deleteUser,
-    getUserLogin
+    getUserLogin,
+    countUsers
 }

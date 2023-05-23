@@ -1,4 +1,4 @@
-const { createInventory, getAllInventory, getOneInventory, updateInventory, deleteInventory } = require('../../../service/mongoose/inventory');
+const { createInventory, getAllInventory, getOneInventory, updateInventory, deleteInventory, countInventory } = require('../../../service/mongoose/inventory');
 const { StatusCodes } = require('http-status-codes');
 
 const create  = async (req, res, next) => {
@@ -64,4 +64,17 @@ const destroy = async (req, res, next) => {
     }
 }
 
-module.exports = { create, index, find, update, destroy };
+const count = async (req, res, next) => {
+    try {
+
+        const result = await countInventory();
+
+        res.json({
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+module.exports = { create, index, find, update, destroy, count };

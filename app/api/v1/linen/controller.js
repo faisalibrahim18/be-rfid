@@ -1,4 +1,4 @@
-const { createLinen, getAllLinen, getOneLinen, updateLinen, deleteLinen } = require('../../../service/mongoose/linen');
+const { createLinen, getAllLinen, getOneLinen, updateLinen, deleteLinen, countLinen } = require('../../../service/mongoose/linen');
 const { StatusCodes } = require('http-status-codes');
 
 const create = async (req, res, next) => {
@@ -65,4 +65,15 @@ const destroy = async (req, res, next) => {
     
 }
 
-module.exports = { create, index, find, update, destroy }
+const count = async (req, res, next) => {
+    try{ 
+        const result = await countLinen()
+
+        res.json({
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+module.exports = { create, index, find, update, destroy, count }

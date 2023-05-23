@@ -25,8 +25,12 @@ const chekingSchema = Schema(
         },
         note: {
             type: String,
+        },
+        date: {
+            type: Date,
+            default: new Date()
         }
-    }
+    },
 )
 
 const transitSchema = Schema(
@@ -61,8 +65,13 @@ const transitSchema = Schema(
         },
         note: {
             type: String,
+        },
+        date: {
+            type: Date,
+            default: new Date()
         }
-    }
+    },
+    { timestamp: true }
 )
 
 const acceptSchema = Schema(
@@ -89,8 +98,13 @@ const acceptSchema = Schema(
         },
         note: {
             type: String,
-        }
-    }
+        },
+        date: {
+            type: Date,
+            default: new Date()
+        }   
+    },
+    { timestamp: true }
 )
 
 const washSchema = Schema(
@@ -118,8 +132,13 @@ const washSchema = Schema(
         note: {
             type: String,
             required: true
+        },
+        date: {
+            type: Date,
+            default: new Date()
         }
-    }
+    },
+    { timestamp: true }
 )
 const drySchema = Schema(
     {
@@ -146,8 +165,13 @@ const drySchema = Schema(
         note: {
             type: String,
             required: true
+        },
+        date: {
+            type: Date,
+            default: new Date()
         }
-    }
+    },
+    { timestamp: true }
 )
 
 const doneSchema = Schema(
@@ -175,8 +199,13 @@ const doneSchema = Schema(
         note: {
             type: String,
             required: true
+        },
+        date: {
+            type: Date,
+            default: new Date()
         }
-    }
+    },
+    { timestamp: true }
 )
 
 const trackingSchema = Schema(
@@ -202,9 +231,10 @@ const trackingSchema = Schema(
         }, 
         done: {
             type: doneSchema,
-        }
+        },
+        
     },
-    { timestamp: true}
+    { timestamp: true }
 )
 
 module.exports = model('Tracker', trackingSchema);

@@ -1,4 +1,4 @@
-const { createDistribusi, downloadDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, downloadPDF } = require('../../../service/mongoose/distribusi');
+const { createDistribusi, downloadDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, countDistrbusi } = require('../../../service/mongoose/distribusi');
 const { StatusCodes } = require('http-status-codes');
 const Distribusi = require('./model');
 const ExcelJS = require('exceljs');
@@ -7,6 +7,15 @@ const ejs = require('ejs');
 const pdf = require('html-pdf');
 const fs = require('fs');
 const path = require('path');
+
+const csv = require('csvtojson')
+const xlsx = require('xlsx');
+
+const Linen = require('../linen/model');
+const Category = require('../category/model');
+const Hospital = require('../hospital/model');
+const Tracker = require('../tracker/model')
+
 
 
 const create = async (req, res, next) => {
@@ -83,8 +92,9 @@ const download = async (req, res, next) => {
         worksheet.columns = [
             { header: 'Customer', key: 'customer', width: 30, alignment: { horizontal: 'middle' } },
             { header: 'Category', key: 'category', width: 20, alignment: { horizontal: 'middle' } },
-            { header: 'Quality', key: 'quality', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Linen', key: 'linen', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Service', key: 'service', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Quality', key: 'quality', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Status', key: 'status', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Date In', key: 'dateIn', width: 15, alignment: { horizontal: 'middle' } },
             { header: 'Date Out', key: 'dateOut', width: 15, alignment: { horizontal: 'middle' } },
@@ -115,8 +125,9 @@ const download = async (req, res, next) => {
             worksheet.addRow({
                 customer: item.customer.name,
                 category: item.category.name,
-                quality: item.quality,
+                linen: item.linen.name,
                 service: item.service,
+                quality: item.quality,
                 status: statusValue,
                 dateIn: item.dateIn,
                 dateOut: item.dateOut,
@@ -136,7 +147,7 @@ const download = async (req, res, next) => {
 const downloadDistribusiPDF = async (req, res, next) => {
     try {
         const distribusi = await getAllDistribusi(req)
-            
+
         const data = {
             distribusi: distribusi
         };
@@ -156,7 +167,7 @@ const downloadDistribusiPDF = async (req, res, next) => {
 
             const filePath = path.resolve(__dirname, '../../../../distribusi.pdf')
 
-            fs.readFile(filePath,(err, file) => {
+            fs.readFile(filePath, (err, file) => {
                 if (err) {
                     console.log(err);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not download PDF');
@@ -173,6 +184,81 @@ const downloadDistribusiPDF = async (req, res, next) => {
     }
 };
 
+const importExcel = async (req, res, next) => {
+    try {
+        const workbook = xlsx.readFile(req.file.path);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+        const transformedData = jsonData.map(async (item) => {
+            const hospitalName = item.Customer;
+            const categoryName = item.Category;
+            const linenName = item.Linen;
+            const statusName = item.Status;
+
+            const hospital = await Hospital.findOne({ name: hospitalName }, '_id');
+            const category = await Category.findOne({ name: categoryName }, '_id');
+            const linen = await Linen.findOne({ name: linenName }, '_id');
+            const status = await Tracker.findOne({ status: statusName}, '_id' )
+
+            if (hospital) {
+                item.customer = hospital._id;
+            }
+            if (category) {
+                item.category = category._id;
+            }
+            if (linen) {
+                item.linen = linen._id;
+            }
+            
+            // Mengubah properti yang sesuai dengan model Distribusi
+            const transformedItem = {
+                weight: item.Weight,
+                amount: item.Amount,
+                dateOut: item['Date Out'],
+                dateIn: item['Date In'],
+                quality: item.Quality,
+                status: status,
+                service: item.Service,
+                linen: linen ? linen._id.toString() : null,
+                category: category ? category._id.toString() : null,
+                customer: hospital ? hospital._id.toString() : null
+            };
+
+
+            return transformedItem;
+        });
+        const transformedformis = await Promise.all(transformedData);
+
+        console.log(transformedformis);
+
+        const result = await Distribusi.insertMany(transformedformis);
+
+        res.status(200).json({
+            data: result,
+            message: 'Success'
+        })
+
+    } catch (err) {
+        res.send({ status: StatusCodes.INTERNAL_SERVER_ERROR, success: false, message: err.message });
+    }
+}
+
+const count = async (req, res, next) => {
+    try{
+        const result = await countDistrbusi();
+
+        res.json({
+            data: result
+        })
+    } catch (err) {
+
+        next(err)
+    }
+}
+
+
 
 module.exports = {
     create,
@@ -181,5 +267,7 @@ module.exports = {
     index,
     destroy,
     download,
-    downloadDistribusiPDF
+    downloadDistribusiPDF,
+    importExcel,
+    count
 }

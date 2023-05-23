@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express();
-const { create, index, update, find, destroy, download, downloadDistribusiPDF } = require('./controler');
+const { create, index, update, find, destroy, download, downloadDistribusiPDF, importExcel, count } = require('./controler');
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
+
+const upload = require('../../../middlewares/multer');
 
 
 router.post('/distribusi', authenticateUser, authhorizeRoles('admin'),  create);
@@ -14,8 +16,12 @@ router.put('/distribusi/:id',  update);
 
 router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), destroy);
 
-router.get('/distribusiDownload', download);
+router.get('/distribusiDownload',authenticateUser, download);
 
-router.get('/distribusiDownloadPdf', downloadDistribusiPDF);
+router.get('/distribusiDownloadPdf',authenticateUser, downloadDistribusiPDF);
+
+router.post('/distribusi/upload', upload.single('excel'), importExcel);
+
+router.get('/distribusiCount', authenticateUser, count)
 
 module.exports = router;

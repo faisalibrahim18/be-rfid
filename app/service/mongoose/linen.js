@@ -68,6 +68,13 @@ const checkLinen = async (id) => {
     const result = await Linen.findOne({ _id : id})
 
     if (!result) throw new NotFoundError('Linen id not found');
+
     return result
 }
-module.exports = { createLinen, getAllLinen, getOneLinen, updateLinen, deleteLinen, checkLinen };
+
+const countLinen = async () => {
+    const result = await Linen.find().count();
+
+    return result
+}
+module.exports = { createLinen, getAllLinen, getOneLinen, updateLinen, deleteLinen, checkLinen, countLinen };

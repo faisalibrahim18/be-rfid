@@ -28,7 +28,8 @@ const distribusiSchema = Schema(
         },
         status: {
             type: mongoose.Types.ObjectId,
-            ref: 'Tracker'
+            ref: 'Tracker',
+            default: String
         },
         dateIn: {
             type: Date,
@@ -47,8 +48,7 @@ const distribusiSchema = Schema(
             required: true
         },
         note : {
-            type : String,
-            required: true
+            type : String
         }
     },
     { timestamp: true }

@@ -1,4 +1,4 @@
-const { createHospital, getAllHospital, getOneHospital, updateHospital, deleteHospital } = require('../../../service/mongoose/hospital');
+const { createHospital, getAllHospital, getOneHospital, updateHospital, deleteHospital, countHospital } = require('../../../service/mongoose/hospital');
 const { StatusCodes } = require('http-status-codes');
 
 const create = async (req, res, next) => {
@@ -64,4 +64,18 @@ const destroy = async (req, res, next) => {
     }
 }
 
-module.exports = { create, index, find, update, destroy };
+const count = async (req, res, next) => {
+    
+    try{ 
+
+        const result = await countHospital();
+
+        res.json({
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+module.exports = { create, index, find, update, destroy, count };

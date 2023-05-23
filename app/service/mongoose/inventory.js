@@ -70,10 +70,17 @@ const deleteInventory = async (req, res) => {
     return result;
 }
 
+const countInventory = async (req, res) => {
+    const result = await Inventory.find().count()
+
+    return result;
+}
+
 module.exports = {
     createInventory,
     getAllInventory,
     getOneInventory,
     updateInventory,
-    deleteInventory
+    deleteInventory,
+    countInventory
 }
