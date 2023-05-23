@@ -3,7 +3,8 @@ const { createTracker, chekingTracker, transitTracker,
     washTracker,
     dryTracker,
     doneTracker,
-    getOneTracker
+    getOneTracker,
+    countTrackers
 } = require('../../../service/mongoose/tracker')
 const { StatusCodes } = require('http-status-codes');
 
@@ -112,6 +113,20 @@ const done = async (req, res, next) => {
     
 }
 
+const count = async (req, res, next) => {
+    try {
+        const result = await countTrackers();
+
+        res.json({
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+
+
+}
+
 module.exports = {
     create,
     checking,
@@ -120,5 +135,6 @@ module.exports = {
     wash,
     dry,
     done,
-    find
+    find,
+    count
 }

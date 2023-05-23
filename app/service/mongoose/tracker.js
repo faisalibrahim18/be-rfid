@@ -195,6 +195,12 @@ const checkStatus = async (id) => {
     return result;
 }
 
+const countTrackers = async () => {
+    const result = await Tracker.find().count();
+
+    return result;
+}
+
 module.exports = {
     createTracker,
     checkStatus,
@@ -204,5 +210,6 @@ module.exports = {
     washTracker,
     dryTracker,
     doneTracker,
-    getOneTracker
+    getOneTracker,
+    countTrackers
 }

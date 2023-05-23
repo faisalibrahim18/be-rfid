@@ -8,7 +8,8 @@ const {
     wash,
     dry,
     done,
-    find
+    find,
+    count
 } = require('./controller')
 const {
     authenticateUser,
@@ -20,6 +21,8 @@ const {
 router.post('/tracker', create);
 
 router.get('/tracker/:id', find);
+
+router.get('/trackerCount', count);
 
 router.put('/tracker/checking/:id',   checking);
 
