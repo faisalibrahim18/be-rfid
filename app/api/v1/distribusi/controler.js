@@ -212,7 +212,6 @@ const importExcel = async (req, res, next) => {
                 item.linen = linen._id;
             }
             
-            // Mengubah properti yang sesuai dengan model Distribusi
             const transformedItem = {
                 weight: item.Weight,
                 amount: item.Amount,

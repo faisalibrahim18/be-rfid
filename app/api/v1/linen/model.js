@@ -3,7 +3,10 @@ const { model, Schema } = mongoose;
 
 const linenSchema = Schema(
     {
-        name: { type: String, required: [true, 'nama linen harus diisi'], unique: true }
+        epc: { type: String, unique: true },
+        category: {
+            type: mongoose.Types.ObjectId,
+        }
     },
     { timestamps: true }
 )
