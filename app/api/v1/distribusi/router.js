@@ -16,11 +16,11 @@ router.put('/distribusi/:id',  update);
 
 router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), destroy);
 
-router.get('/distribusiDownload',authenticateUser, download);
+router.get('/distribusiDownload', download);
 
 router.get('/distribusiDownloadPdf',authenticateUser, downloadDistribusiPDF);
 
-router.post('/distribusi/upload', upload.single('excel'), importExcel);
+router.post('/distribusi/upload', upload.single('excel'), authenticateUser, authhorizeRoles('admin'), importExcel);
 
 router.get('/distribusiCount', authenticateUser, count)
 

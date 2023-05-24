@@ -5,12 +5,13 @@ const { createLinen,
     updateLinen,
     deleteLinen,
     countLinen,
-    importExcelLinen
 } = require('../../../service/mongoose/linen');
 const { StatusCodes } = require('http-status-codes');
 const xlsx = require('xlsx');
 
-const Linen = require('./model')
+const Linen = require('./model');
+
+const exceljs = require('exceljs')
 
 const create = async (req, res, next) => {
     try {
@@ -105,6 +106,7 @@ const importExcel = async (req, res, next) => {
         const transformedData = jsonData.map((item) => {
             const transformedItem = {
                 epc: item.EPC,
+                date: new Date()
             }
 
             return transformedItem
@@ -119,4 +121,55 @@ const importExcel = async (req, res, next) => {
         res.send({ status: StatusCodes.INTERNAL_SERVER_ERROR, success: false, message: err.message });
     }
 }
-module.exports = { create, index, find, update, destroy, count, importExcel }
+
+
+const exportExcel = async (req, res, next) => {
+    try {
+        const result = await getAllLinen()
+        
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet('linen');
+
+        worksheet.columns = [
+            { header: 'No', key: 'no', width: 4, alignment: { horizontal: 'middle' } },
+            { header: 'Epc', key: 'epc', width: 30, alignment: { horizontal: 'middle' } },
+            { header: 'Category', key: 'category', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Date', key: 'date', width: 20, alignment: { horizontal: 'middle' } },
+        ];
+        
+        worksheet.getRow(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF00FF00' }
+        };
+
+        worksheet.columns.forEach(column => {
+            column.headerStyle = {
+                alignment: { horizontal: 'middle' },
+                fill: {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF00FF00' }
+                }
+            };
+        });
+
+        result.forEach((item, index) => {
+            const categoryValue = item.category ? item.category.name : '-';
+           
+            worksheet.addRow({
+                no: index + 1,
+                epc: item.epc,
+                category: categoryValue,
+                date: item.date
+            })
+        })
+
+        await workbook.xlsx.writeFile('linen.xlsx');
+        res.download('linen.xlsx');
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { create, index, find, update, destroy, count, importExcel, exportExcel }

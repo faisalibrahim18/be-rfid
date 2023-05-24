@@ -67,7 +67,7 @@ const getAllDistribusi = async (req, res, next) => {
         })
         .populate({
             path: 'linen',
-            select: 'name'
+            select: 'epc category date'
         })
         .populate({
             path: 'status',

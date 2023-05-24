@@ -18,8 +18,11 @@ const createLinen = async (req) => {
 
 const getAllLinen = async (req) => {
     const result = await Linen.find()
-        .select('name')
-
+        .select('epc category date')
+        .populate({
+            path: 'category',
+            select: 'name'
+        })
     if (!result) throw new NotFoundError('Linen not found');
 
     return result;
@@ -29,7 +32,7 @@ const getOneLinen = async (req) => {
     const { id } = req.params;
 
     const result = await Linen.findOne({ _id: id })
-        .select('name')
+        .select('epc category')
 
     if (!result) throw new NotFoundError('Linen not found');
 
@@ -38,14 +41,11 @@ const getOneLinen = async (req) => {
 
 const updateLinen = async (req) => {
     const { id } = req.params;
-    const { name } = req.body;
-
-    const checkName = await Linen.findOne({ name, _id: { $ne: id } });
-    if (checkName) throw new BadRequestError('Linen name already exists');
+    const { category } = req.body;
 
     const result = await Linen.findByIdAndUpdate(
         { _id: id },
-        { name },
+        { category },
         { new: true, runValidators: true }
     )
 
@@ -79,16 +79,7 @@ const countLinen = async () => {
     return result
 }
 
-const importExcelLinen = async (req) => {
-    const workbook = xlsx.readFile(req.file.path);
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-    const result = console.log(jsonData);
-
-    return result;
-}
 module.exports = {
     createLinen,
     getAllLinen,
@@ -97,5 +88,4 @@ module.exports = {
     deleteLinen,
     checkLinen,
     countLinen,
-    importExcelLinen
 };

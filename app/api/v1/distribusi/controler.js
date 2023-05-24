@@ -125,7 +125,7 @@ const download = async (req, res, next) => {
             worksheet.addRow({
                 customer: item.customer.name,
                 category: item.category.name,
-                linen: item.linen.name,
+                linen: item.linen.category,
                 service: item.service,
                 quality: item.quality,
                 status: statusValue,
@@ -186,10 +186,16 @@ const downloadDistribusiPDF = async (req, res, next) => {
 
 const importExcel = async (req, res, next) => {
     try {
+        if (!req.file) {
+            throw new Error('No file uploaded');
+        }
+
         const workbook = xlsx.readFile(req.file.path);
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+        console.log(jsonData);
 
         const transformedData = jsonData.map(async (item) => {
             const hospitalName = item.Customer;
@@ -199,8 +205,8 @@ const importExcel = async (req, res, next) => {
 
             const hospital = await Hospital.findOne({ name: hospitalName }, '_id');
             const category = await Category.findOne({ name: categoryName }, '_id');
-            const linen = await Linen.findOne({ name: linenName }, '_id');
-            const status = await Tracker.findOne({ status: statusName}, '_id' )
+            const linen = await Linen.findOne({ epc: linenName }, '_id');
+            const status = await Tracker.findOne({ status: statusName }, '_id')
 
             if (hospital) {
                 item.customer = hospital._id;
@@ -211,7 +217,7 @@ const importExcel = async (req, res, next) => {
             if (linen) {
                 item.linen = linen._id;
             }
-            
+
             const transformedItem = {
                 weight: item.Weight,
                 amount: item.Amount,
@@ -230,7 +236,7 @@ const importExcel = async (req, res, next) => {
         });
         const transformedformis = await Promise.all(transformedData);
 
-        console.log(transformedformis);
+
 
         const result = await Distribusi.insertMany(transformedformis);
 
@@ -245,7 +251,7 @@ const importExcel = async (req, res, next) => {
 }
 
 const count = async (req, res, next) => {
-    try{
+    try {
         const result = await countDistrbusi();
 
         res.json({
