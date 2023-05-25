@@ -2,18 +2,14 @@ const Category = require('../../api/v1/category/model');
 const { NotFoundError, BadRequestError } = require('../../errors');
 
 const createCategory = async (req) => {
-    const { kode, name } = req.body;
+    const { name } = req.body;
 
-    const checkKode = await Category.findOne({ kode: kode })
-
-    if (checkKode) throw new BadRequestError(`Kode Category has been created`);
 
     const checkName = await Category.findOne({ name: name })
 
     if (checkName) throw new BadRequestError(`Name Category has been created`);
 
     const result = await Category.create({
-        kode,
         name
     })
 
@@ -24,7 +20,7 @@ const createCategory = async (req) => {
 const getAllCategory = async (req) => {
 
     const result = await Category.find()
-        .select('kode name')
+        .select('name')
 
     if (!result) throw new NotFoundError('Tidak ada Category');
 
@@ -35,7 +31,7 @@ const getOneCategory = async (req) => {
     const { id } = req.params;
 
     const result = await Category.findOne({ _id: id })
-        .select('kode name')
+        .select('name')
 
     if (!result) throw new NotFoundError(`Category dengan ${id} tidak ditemukan`);
 
@@ -44,24 +40,18 @@ const getOneCategory = async (req) => {
 
 const updateCategory = async (req) => {
     const { id } = req.params;
-    const { kode, name } = req.body;
+    const { name } = req.body;
 
-    const checkKode = await Category.findOne({  
-        kode,
-        _id: { $ne: id }
-    });
-
-        if (checkKode) throw new BadRequestError('kategori kode duplikat');
     const checkName = await Category.findOne({
         name,
         _id: { $ne: id }
     })
-    if (checkName) throw new BadRequestError('kategori nama duplikat')
+    if (checkName) throw new BadRequestError('kategori nama duplikat');
+
     const result = await Category.findByIdAndUpdate(
         { _id: id },
         {
-            name,
-            kode
+            name
         },
         { new: true, runValidators: true }
 
@@ -86,6 +76,7 @@ const checkCategory = async (id) => {
     const result = await Category.findOne({ _id: id })
 
     if (!result) throw new NotFoundError('Category id not found');
+    
     return result
 }
 

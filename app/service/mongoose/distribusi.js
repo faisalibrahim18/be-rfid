@@ -131,7 +131,7 @@ const updateDistribusi = async (req, res, next) => {
     return result
 }
 
-const deleteDistrbusi = async (req, res, next) => {
+const   deleteDistrbusi = async (req, res, next) => {
     const { id } = req.params;
 
     const result = await Distribusi.findByIdAndDelete({ _id: id })

@@ -6,12 +6,17 @@ const { createLinen,
     deleteLinen,
     countLinen,
 } = require('../../../service/mongoose/linen');
+const { checkCategory } = require('../../../service/mongoose/category') 
+
 const { StatusCodes } = require('http-status-codes');
 const xlsx = require('xlsx');
 
 const Linen = require('./model');
 
-const exceljs = require('exceljs')
+const exceljs = require('exceljs');
+const { NotFoundError } = require('../../../errors');
+
+
 
 const create = async (req, res, next) => {
     try {
@@ -91,6 +96,11 @@ const count = async (req, res, next) => {
 
 const importExcel = async (req, res, next) => {
     try {
+
+        const { category } = req.body;
+        
+        await checkCategory(category);  
+
         const workbook = xlsx.readFile(req.file.path);
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
@@ -106,7 +116,8 @@ const importExcel = async (req, res, next) => {
         const transformedData = jsonData.map((item) => {
             const transformedItem = {
                 epc: item.EPC,
-                date: new Date()
+                date: new Date(),
+                category: category
             }
 
             return transformedItem
