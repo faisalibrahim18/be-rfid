@@ -166,8 +166,7 @@ const exportExcel = async (req, res, next) => {
         });
 
         result.forEach((item, index) => {
-            const categoryValue = item.category ? item.category.name : '-';
-           
+            const categoryValue = item.category ? item.category.name : '-';           
             worksheet.addRow({
                 no: index + 1,
                 epc: item.epc,

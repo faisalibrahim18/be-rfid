@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const ejs = require('ejs');
 
 
 const app = express();
@@ -16,12 +16,15 @@ const linenRouter = require('./app/api/v1/linen/router');
 const inventoryRouter = require('./app/api/v1/inventory/router');
 const distribusiRouter = require('./app/api/v1/distribusi/router');
 const trackerRouter = require('./app/api/v1/tracker/router');
+const qualityRouter = require('./app/api/v1/quality/router');
+const invoisRouter = require('./app/api/v1/invoice/router');
 
 const v1 = '/api/v1/rfid';
 
 const notFoundMiddleware = require('./app/middlewares/not-found');
 const handleErrorMiddleware = require('./app/middlewares/handle-error');
 
+app.set('view engine', 'ejs');
 app.use(
     cors({
         credentials: true,
@@ -48,6 +51,9 @@ app.use(v1, linenRouter);
 app.use(v1, inventoryRouter);
 app.use(v1, distribusiRouter);
 app.use(v1, trackerRouter);
+app.use(v1, qualityRouter);
+app.use(v1, invoisRouter);
+
 
 app.use(notFoundMiddleware);
 app.use(handleErrorMiddleware);

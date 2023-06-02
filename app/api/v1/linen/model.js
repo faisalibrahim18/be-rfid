@@ -8,6 +8,16 @@ const linenSchema = Schema(
             type: mongoose.Types.ObjectId,
             ref: 'Category',
         },
+        quality: {
+            type: mongoose.Types.ObjectId,
+            ref: 'Quality',
+            // required: [true, 'kualitas harus di isi']
+        },
+        // customer: {
+        //     type: mongoose.Types.ObjectId,
+        //     ref: 'Hospital',
+        //     required: [true, 'Customer Harus di isi']
+        // },  
         date: {
             type: Date,
         }

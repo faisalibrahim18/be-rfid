@@ -9,7 +9,7 @@ const userSchema = Schema(
         password: { type: String, required: [true, 'password cannot be empty'], },
         email: { type: String, required: [true, 'email cannot be empty'], unique: true },
         number_phone: { type: Number, required: [true, 'number_phone cannot be'], unique: true },
-        role: { type: String, enum: ['admin','user'], default: 'user' }
+        role: { type: String, enum: ['admin','user', 'superadmin', 'delivery'], default: 'user' }
     },
     {
         timestamps: true
