@@ -124,7 +124,7 @@ const download = async (req, res, next) => {
             const statusValue = item.status ? item.status.status : '-';
             worksheet.addRow({
                 customer: item.customer.name,
-                category: item.category.name,
+                category: item.category.name ? item.category : '-',
                 linen: item.linen.category,
                 service: item.service,
                 quality: item.quality,

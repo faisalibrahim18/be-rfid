@@ -16,7 +16,7 @@ router.put('/linen/:id',authenticateUser, authhorizeRoles('admin'), update);
 
 router.delete('/linen/:id',authenticateUser, authhorizeRoles('admin'), destroy);
 
-router.post('/importLinen', authenticateUser, authhorizeRoles('admin'), upload.single('linens'),  importExcel);
+router.post('/importLinen', upload.single('linens'),  importExcel);
 
 router.get('/exportLinen', exportExcel )
 

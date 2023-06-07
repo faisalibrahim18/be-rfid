@@ -129,7 +129,7 @@ const importExcel = async (req, res, next) => {
 
         res.send({ status: StatusCodes.OK, message: true })
     } catch (err) {
-        res.send({ status: StatusCodes.INTERNAL_SERVER_ERROR, success: false, message: err.message });
+        res.send({ status: StatusCodes.INTERNAL_SERVER_ERROR, message: err.message });
     }
 }
 
@@ -172,7 +172,7 @@ const exportExcel = async (req, res, next) => {
                 epc: item.epc,
                 category: categoryValue,
                 date: item.date
-            })
+            })                                                                                                                                                                                                                                                                                                                                                                                                           
         })
 
         await workbook.xlsx.writeFile('linen.xlsx');

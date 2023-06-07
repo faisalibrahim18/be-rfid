@@ -1,13 +1,17 @@
-const { createTracker, chekingTracker, transitTracker,
+const {
+    createTracker, chekingTracker, transitTracker,
     acceptedTracker,
     washTracker,
     dryTracker,
     doneTracker,
     getOneTracker,
-    countTrackers
+    countTrackers,
+    exportWashTracker,
+    returnHospital
 } = require('../../../service/mongoose/tracker')
 const { StatusCodes } = require('http-status-codes');
 
+const path = require('path');
 
 const create = async (req, res, next) => {
     try {
@@ -94,7 +98,7 @@ const dry = async (req, res, next) => {
             message: 'Status changed successfully',
             data: result
         })
-    } catch(err) {
+    } catch (err) {
         next(err);
     }
 }
@@ -110,7 +114,7 @@ const done = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-    
+
 }
 
 const count = async (req, res, next) => {
@@ -123,10 +127,27 @@ const count = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-
-
 }
 
+const backHospital = async (req, res, next) => {
+    try {
+        const result = await returnHospital(req)
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+const exportWash = async (req, res, next) => {
+    try {
+        await exportWashTracker(req, res)
+    } catch (err) {
+        next(err)
+    }
+}
 module.exports = {
     create,
     checking,
@@ -136,5 +157,8 @@ module.exports = {
     dry,
     done,
     find,
-    count
+    count,
+    exportWash,
+    backHospital
 }
+

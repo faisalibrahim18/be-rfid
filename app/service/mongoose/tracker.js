@@ -1,6 +1,9 @@
 const Tracker = require('../../api/v1/tracker/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
-
+const xlsx = require('xlsx');
+const Linen = require('../../api/v1/linen/model');
+const ExcelJS = require('exceljs');
+const { json } = require('express');
 
 const createTracker = async (req) => {
 
@@ -14,8 +17,8 @@ const createTracker = async (req) => {
 const getOneTracker = async (req) => {
 
     const { id } = req.params
-    const result = await Tracker.findOne({_id : id})
-    .select('status checking transit accepted wash dry done');
+    const result = await Tracker.findOne({ _id: id })
+        .select('status checking transit accepted wash dry done');
     console.log(result.createdAt)
 
     if (!result) throw new BadRequestError('id not found')
@@ -27,22 +30,62 @@ const chekingTracker = async (req) => {
     const { id } = req.params;
 
     const {
-        checking
+        name,
+        email,
+        no_hp,
+        heavy,
+        note,
+
     } = req.body;
+
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const count = jsonData.length;
+
+    const transformedData = jsonData.map(async (item) => {
+        const codeEpc = item.EPC;
+
+        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
+            populate({
+                path: 'category',
+                select: 'name'
+            })
+
+        if (Category) {
+            item.category = Category.category.name;
+        }
+        const transformedItem = {
+            epc: item.EPC,
+            category: Category ? Category.category.name : null
+        }
+        return transformedItem
+    })
+
+    const transformedformis = await Promise.all(transformedData);
+
 
     const tracker = await Tracker.findById(id);
 
-    if (!tracker) throw new NotFoundError('Tracker not found');
-
-    if (tracker.status === 'transit' || tracker.status === 'accepted' || tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
+    if (tracker.status === 'transit to laundry' || tracker.status === 'accepted' || tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
 
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
-            checking,
             status: 'checking',
+            checking: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                amount: count,
+                heavy: heavy,
+                note: note,
+                linen: transformedformis
+            }
         },
         { new: true, runValidators: true }
     )
@@ -54,7 +97,14 @@ const chekingTracker = async (req) => {
 const transitTracker = async (req) => {
     const { id } = req.params;
     const {
-        transit
+        name,
+        email,
+        no_hp,
+        vehicle,
+        license,
+        amount,
+        heavy,
+        note,
     } = req.body;
 
     const tracker = await Tracker.findById(id);
@@ -68,8 +118,17 @@ const transitTracker = async (req) => {
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
-            status: 'transit',
-            transit
+            status: 'transit to laundry',
+            transit: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                vehicle: vehicle,
+                license: license,
+                amount: amount,
+                heavy: heavy,
+                note: note,
+            }
         },
         { new: true, runValidators: true }
     )
@@ -82,12 +141,43 @@ const acceptedTracker = async (req) => {
     const { id } = req.params;
 
     const {
-        accepted
+        name,
+        email,
+        no_hp,
+        heavy,
+        note,
     } = req.body;
+
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const count = jsonData.length;
+
+    const transformedData = jsonData.map(async (item) => {
+        const codeEpc = item.EPC;
+
+        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
+            populate({
+                path: 'category',
+                select: 'name'
+            })
+
+        if (Category) {
+            item.category = Category.category.name;
+        }
+        const transformedItem = {
+            epc: item.EPC,
+            category: Category ? Category.category.name : null
+        }
+        return transformedItem
+    })
+
+    const transformedformis = await Promise.all(transformedData);
 
     const tracker = await Tracker.findById(id);
 
-    if (!tracker) throw new NotFoundError('Tracker not found');
 
     if (tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
@@ -97,9 +187,17 @@ const acceptedTracker = async (req) => {
         { _id: id },
         {
             status: 'accepted',
-            accepted
+            accepted: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                amount: count,
+                heavy: heavy,
+                note: note,
+                linen: transformedformis
+            }
         },
-        { new: true,  runValidators: true}
+        { new: true, runValidators: true }
     )
 
     if (!result) throw new NotFoundError('Tracker not found')
@@ -111,9 +209,39 @@ const washTracker = async (req) => {
     const { id } = req.params;
 
     const {
-        wash
+        name,
+        email,
+        no_hp,
+        note,
+        heavy
     } = req.body;
 
+
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const count = jsonData.length;
+
+    const transformedData = jsonData.map(async (item) => {
+        const codeEpc = item.EPC;
+
+        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
+            populate({
+                path: 'category',
+                select: 'name'
+            })
+
+        if (Category) {
+            item.category = Category.category.name;
+        }
+        const transformedItem = {
+            epc: item.EPC,
+            category: Category ? Category.category.name : null
+        }
+        return transformedItem
+    })
     const tracker = await Tracker.findById(id);
 
     if (!tracker) throw new NotFoundError('Tracker not found');
@@ -121,12 +249,21 @@ const washTracker = async (req) => {
     if (tracker.status === 'drying' || tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
+    const transformedformis = await Promise.all(transformedData);
 
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
-        {   
-            status: 'washing',
-            wash
+        {
+            status: 'wash',
+            wash: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                amount: count,
+                heavy: heavy,
+                note: note,
+                linen: transformedformis
+            }
         },
         { new: true, runValidators: true }
     )
@@ -137,10 +274,57 @@ const washTracker = async (req) => {
 }
 
 const dryTracker = async (req) => {
-    const  { id } = req.params;
+    const { id } = req.params;
 
-    const { 
-        dry
+    const {
+        name,
+        email,
+        no_hp,
+        note,
+        heavy,
+        amount
+    } = req.body;
+
+    const tracker = await Tracker.findById(id);
+
+    if (!tracker) throw new NotFoundError('Tracker not found');
+
+    if (tracker.status === 'success', tracker.status === 'transit to hospital') {
+        throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
+    }
+    const result = await Tracker.findByIdAndUpdate(
+        { _id: id },
+        {
+            status: 'drying',
+            dry: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                note: no_hp,
+                amount: amount,
+                heavy: heavy,
+                note: note
+            }
+        },
+        { new: true, runValidators: true },
+    )
+
+    if (!result) throw new NotFoundError('Tracker not found')
+
+    return result;
+}
+
+const returnHospital = async (req) => {
+    const { id } = req.params;
+    const {
+        name,
+        email,
+        no_hp,
+        vehicle,
+        license,
+        amount,
+        heavy,
+        note,
     } = req.body;
 
     const tracker = await Tracker.findById(id);
@@ -150,32 +334,82 @@ const dryTracker = async (req) => {
     if (tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
+
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
-            status: 'drying',
-            dry
+            status: 'transit to hospital',
+            returned: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                vehicle: vehicle,
+                license: license,
+                amount: amount,
+                heavy: heavy,
+                note: note,
+            }
         },
-        { new: true, runValidators: true },
+        { new: true, runValidators: true }
     )
-
     if (!result) throw new NotFoundError('Tracker not found')
-    
+
     return result;
 }
 
 const doneTracker = async (req) => {
     const { id } = req.params;
 
-    const { 
-        done
+    const {
+        name,
+        email,
+        no_hp,
+        note,
+        heavy,
+        
     } = req.body;
 
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const count = jsonData.length;
+
+    const transformedData = jsonData.map(async (item) => {
+        const codeEpc = item.EPC;
+
+        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
+            populate({
+                path: 'category',
+                select: 'name'
+            })
+
+        if (Category) {
+            item.category = Category.category.name;
+        }
+        const transformedItem = {
+            epc: item.EPC,
+            category: Category ? Category.category.name : null
+        }
+        return transformedItem
+    })
+
+    const transformedformis = await Promise.all(transformedData);
+
     const result = await Tracker.findByIdAndUpdate(
-        { _id : id },
+        { _id: id },
         {
             status: 'success',
-            done
+            done: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                note: note,
+                heavy: heavy,
+                amount: count,
+                linen: transformedformis
+            }
         },
         { new: true, runValidators: true }
     )
@@ -185,20 +419,74 @@ const doneTracker = async (req) => {
     return result;
 }
 
+
+
 const checkStatus = async (id) => {
     const result = await Tracker.findById({
         _id: id
     })
 
- 
+
     if (!result) throw new NotFoundError('Status id not found');
     return result;
 }
+
+
 
 const countTrackers = async () => {
     const result = await Tracker.find().count();
 
     return result;
+}
+
+const exportWashTracker = async (req, res) => {
+    const { id } = req.params;
+    const result = await Tracker.findOne({ _id: id })
+        .select('wash')
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('data');
+    worksheet.columns = [
+        { header: 'Name', key: 'Name', width: 20, alignment: { horizontal: 'middle' } },
+        { header: 'Email', key: 'Email', width: 20, alignment: { horizontal: 'middle' } },
+        { header: 'Phone_Number', key: 'Phone_Number', width: 20, alignment: { horizontal: 'middle' } },
+        { header: 'Amount', key: 'Amount', width: 10, alignment: { horizontal: 'middle' } },
+        { header: 'Heavy', key: 'Heavy', width: 10, alignment: { horizontal: 'middle' } },
+        { header: 'Note', key: 'Note', width: 20, alignment: { horizontal: 'middle' } },
+        { header: 'EPC', key: 'EPC', width: 30, alignment: { horizontal: 'middle' } },
+        { header: 'Category', key: 'Category', width: 15, alignment: { horizontal: 'middle' } },
+        { header: 'Date', key: 'Date', width: 15, alignment: { horizontal: 'middle' } },
+    ];
+
+    worksheet.columns.forEach(column => {
+        column.headerStyle = {
+            alignment: { horizontal: 'middle' },
+            fill: {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF00FF00' }
+            }
+        };
+    });
+
+    result.wash.linen.forEach(async (item) => {
+        worksheet.addRow({
+            Name: result.wash.name,
+            Email: result.wash.email,
+            Phone_Number: result.wash.no_hp,
+            Amount: result.wash.amount,
+            Heavy: result.wash.heavy,
+            Note: result.wash.note,
+            EPC: item.epc,
+            Category: item.category,
+            Date: result.wash.date,
+        });
+    });
+    const filePath = 'wash.xlsx';
+    await workbook.xlsx.writeFile(filePath);
+
+    res.download(filePath);
+
 }
 
 module.exports = {
@@ -211,5 +499,9 @@ module.exports = {
     dryTracker,
     doneTracker,
     getOneTracker,
-    countTrackers
+    countTrackers,
+    exportWashTracker,
+    returnHospital
 }
+
+

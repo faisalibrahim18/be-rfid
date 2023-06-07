@@ -1,6 +1,19 @@
 const mongoose = require('mongoose');
 const { model, Schema } = mongoose;
 
+const linenSchema = Schema(
+    {
+        epc: {
+            type: String,
+            required: true
+        },
+        category: {
+            type: String,
+            required: true
+        }
+    }
+)
+
 const chekingSchema = Schema(
     {
         name: { 
@@ -29,6 +42,9 @@ const chekingSchema = Schema(
         date: {
             type: Date,
             default: new Date()
+        },
+        linen: {
+            type: [linenSchema]
         }
     },
 )
@@ -102,13 +118,18 @@ const acceptSchema = Schema(
         date: {
             type: Date,
             default: new Date()
-        }   
+        },
+        linen: {
+            type: [linenSchema]
+        }
     },
     { timestamp: true }
 )
 
+
+
 const washSchema = Schema(
-    {
+    {  
         name: {
             type: String,
             required: true,
@@ -136,6 +157,9 @@ const washSchema = Schema(
         date: {
             type: Date,
             default: new Date()
+        },
+        linen: {
+            type: [linenSchema]
         }
     },
     { timestamp: true }
@@ -174,6 +198,46 @@ const drySchema = Schema(
     { timestamp: true }
 )
 
+const returnHospital = Schema(
+    {
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
+        no_hp: {
+            type: String,
+            required: true
+        },
+        vehicle: {
+            type: String,
+            required: true,
+        },
+        license: {
+            type: String,
+            required: true
+        },
+        amount: {
+            type: Number,
+            required: true
+        },
+        heavy: {
+            type: String,
+            required: true
+        },
+        note: {
+            type: String,
+        },
+        date: {
+            type: Date,
+            default: new Date()
+        }
+    }
+)
+
 const doneSchema = Schema(
     {
         name: {
@@ -203,6 +267,9 @@ const doneSchema = Schema(
         date: {
             type: Date,
             default: new Date()
+        },
+        linen: {
+            type: [linenSchema]
         }
     },
     { timestamp: true }
@@ -229,6 +296,9 @@ const trackingSchema = Schema(
         dry: {
             type: drySchema,
         }, 
+        returned: {
+            type: returnHospital
+        },
         done: {
             type: doneSchema,
         },
