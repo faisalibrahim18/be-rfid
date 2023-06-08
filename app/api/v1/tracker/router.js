@@ -35,9 +35,9 @@ router.put('/tracker/accepted/:id', upload.single('accept') ,accepted);
 
 router.put('/tracker/wash/:id', upload.single('wash'), wash);
 
-router.put('/tracker/dry/:id', dry);
+router.put('/tracker/dry/:id', upload.single('dry'), dry);
 
-router.put('/tracker/returned/:id', backHospital)
+router.put('/tracker/delivery/:id', backHospital)
 
 router.put('/tracker/done/:id', upload.single('done') ,done);
 

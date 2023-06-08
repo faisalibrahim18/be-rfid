@@ -5,6 +5,8 @@ const Linen = require('../../api/v1/linen/model');
 const ExcelJS = require('exceljs');
 const { json } = require('express');
 
+const fs = require('fs');
+
 const createTracker = async (req) => {
 
     const result = await Tracker.create({
@@ -285,6 +287,34 @@ const dryTracker = async (req) => {
         amount
     } = req.body;
 
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const count = jsonData.length;
+
+    const transformedData = jsonData.map(async (item) => {
+        const codeEpc = item.EPC;
+
+        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
+            populate({
+                path: 'category',
+                select: 'name'
+            })
+
+        if (Category) {
+            item.category = Category.category.name;
+        }
+        const transformedItem = {
+            epc: item.EPC,
+            category: Category ? Category.category.name : null
+        }
+        return transformedItem
+    })
+
+    const transformedformis = await Promise.all(transformedData);   
+
     const tracker = await Tracker.findById(id);
 
     if (!tracker) throw new NotFoundError('Tracker not found');
@@ -301,9 +331,10 @@ const dryTracker = async (req) => {
                 email: email,
                 no_hp: no_hp,
                 note: no_hp,
-                amount: amount,
+                amount: count,
                 heavy: heavy,
-                note: note
+                note: note,
+                linen: transformedformis
             }
         },
         { new: true, runValidators: true },
@@ -314,20 +345,20 @@ const dryTracker = async (req) => {
     return result;
 }
 
-const returnHospital = async (req) => {
-    const { id } = req.params;
-    const {
-        name,
-        email,
-        no_hp,
-        vehicle,
-        license,
-        amount,
-        heavy,
-        note,
-    } = req.body;
+    const deliveryToHospital = async (req) => {
+        const { id } = req.params;
+        const {
+            name,
+            email,
+            no_hp,
+            vehicle,
+            license,
+            amount,
+            heavy,
+            note,
+        } = req.body;
 
-    const tracker = await Tracker.findById(id);
+        const tracker = await Tracker.findById(id);
 
     if (!tracker) throw new NotFoundError('Tracker not found');
 
@@ -501,7 +532,7 @@ module.exports = {
     getOneTracker,
     countTrackers,
     exportWashTracker,
-    returnHospital
+    deliveryToHospital
 }
 
 

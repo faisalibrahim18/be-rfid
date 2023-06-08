@@ -3,10 +3,14 @@ const { model, Schema } = mongoose;
 
 const linenSchema = Schema(
     {
-        epc: { type: String, unique: true },
+        epc: { type: String, 
+            unique: true,
+            required: true
+         },
         category: {
             type: mongoose.Types.ObjectId,
             ref: 'Category',
+            required: true
         },
         quality: {
             type: mongoose.Types.ObjectId,

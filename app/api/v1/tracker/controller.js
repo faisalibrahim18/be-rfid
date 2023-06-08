@@ -7,7 +7,7 @@ const {
     getOneTracker,
     countTrackers,
     exportWashTracker,
-    returnHospital
+    deliveryToHospital
 } = require('../../../service/mongoose/tracker')
 const { StatusCodes } = require('http-status-codes');
 
@@ -131,7 +131,7 @@ const count = async (req, res, next) => {
 
 const backHospital = async (req, res, next) => {
     try {
-        const result = await returnHospital(req)
+        const result = await deliveryToHospital(req)
 
         res.status(StatusCodes.OK).json({
             data: result

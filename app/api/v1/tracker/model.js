@@ -193,6 +193,9 @@ const drySchema = Schema(
         date: {
             type: Date,
             default: new Date()
+        },
+        linen: {
+            type: [linenSchema]
         }
     },
     { timestamp: true }

@@ -14,7 +14,7 @@ const xlsx = require('xlsx');
 const Linen = require('./model');
 
 const exceljs = require('exceljs');
-const { NotFoundError } = require('../../../errors');
+const { NotFoundError, BadRequestError } = require('../../../errors');
 
 
 
@@ -98,6 +98,8 @@ const importExcel = async (req, res, next) => {
     try {
 
         const { category } = req.body;
+
+        if (!category) throw new BadRequestError('category required')
         
         await checkCategory(category);  
 
@@ -105,11 +107,13 @@ const importExcel = async (req, res, next) => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
+        
+        if (!workbook) throw new BadRequestError('file required')
 
         for (const item of jsonData) {
             const existingLinen = await Linen.findOne({ epc: item.EPC });
             if (existingLinen) {
-                return res.send({ message: 'Duplicate EPC' });
+                return res.send({ status: StatusCodes.BAD_REQUEST, message: 'Duplicate EPC' });
             }
         }
 
@@ -125,11 +129,14 @@ const importExcel = async (req, res, next) => {
 
 
 
-        await Linen.create(transformedData)
+        const result = await Linen.create(transformedData)
 
-        res.send({ status: StatusCodes.OK, message: true })
+        res.status(StatusCodes.OK).json({
+            message: "import linen success",
+            data: result
+        })
     } catch (err) {
-        res.send({ status: StatusCodes.INTERNAL_SERVER_ERROR, message: err.message });
+        next(err)
     }
 }
 
