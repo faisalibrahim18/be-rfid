@@ -18,7 +18,7 @@ router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), des
 
 router.get('/distribusiDownload', download);
 
-router.get('/distribusiDownloadPdf',authenticateUser, downloadDistribusiPDF);
+router.get('/distribusiDownloadPdf', downloadDistribusiPDF);
 
 router.post('/distribusi/upload', upload.single('excel'), authenticateUser, authhorizeRoles('admin'), importExcel);
 

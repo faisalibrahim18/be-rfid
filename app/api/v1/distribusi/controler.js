@@ -122,10 +122,11 @@ const download = async (req, res, next) => {
 
         result.forEach((item) => {
             const statusValue = item.status ? item.status.status : '-';
+            console.log(item.linen.epc)
             worksheet.addRow({
                 customer: item.customer.name,
-                category: item.category.name ? item.category : '-',
-                linen: item.linen.category,
+                category: item.category.name ,
+                linen: item.linen.epc,
                 service: item.service,
                 quality: item.quality,
                 status: statusValue,
