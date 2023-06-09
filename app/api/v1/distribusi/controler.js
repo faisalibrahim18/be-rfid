@@ -145,6 +145,54 @@ const download = async (req, res, next) => {
         next(err)
     }
 }
+const downloadTemplateExcel = async (req, res, next) => {
+    try {
+        const result = await getAllDistribusi(req)
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('data');
+
+        worksheet.columns = [
+            { header: 'Customer', key: 'customer', width: 30, alignment: { horizontal: 'middle' } },
+            { header: 'Category', key: 'category', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Linen', key: 'linen', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Service', key: 'service', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Quality', key: 'quality', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Status', key: 'status', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Date In', key: 'dateIn', width: 15, alignment: { horizontal: 'middle' } },
+            { header: 'Date Out', key: 'dateOut', width: 15, alignment: { horizontal: 'middle' } },
+            { header: 'Amount', key: 'amount', width: 10, alignment: { horizontal: 'middle' } },
+            { header: 'Weight', key: 'weight', width: 10, alignment: { horizontal: 'middle' } },
+        ];
+
+        worksheet.getRow(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF00FF00' }
+        };
+
+        worksheet.columns.forEach(column => {
+            column.headerStyle = {
+                alignment: { horizontal: 'middle' },
+                fill: {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF00FF00' }
+                }
+            };
+        });
+
+
+       
+
+
+        await workbook.xlsx.writeFile('data.xlsx');
+        res.download('data.xlsx');
+
+    } catch (err) {
+        next(err)
+    }
+}
 const downloadDistribusiPDF = async (req, res, next) => {
     try {
         const distribusi = await getAllDistribusi(req)
@@ -275,5 +323,6 @@ module.exports = {
     download,
     downloadDistribusiPDF,
     importExcel,
-    count
+    count,
+    downloadTemplateExcel
 }
