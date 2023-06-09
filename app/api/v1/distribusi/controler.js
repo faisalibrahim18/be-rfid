@@ -187,7 +187,7 @@ const downloadTemplateExcel = async (req, res, next) => {
 
 
         await workbook.xlsx.writeFile('templateDistribusi.xlsx');
-        res.download('data.xlsx');
+        res.download('templateDistribusi.xlsx');
 
     } catch (err) {
         next(err)
