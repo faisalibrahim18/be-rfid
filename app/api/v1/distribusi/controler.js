@@ -181,11 +181,6 @@ const downloadTemplateExcel = async (req, res, next) => {
                 }
             };
         });
-
-
-       
-
-
         await workbook.xlsx.writeFile('templateDistribusi.xlsx');
         res.download('templateDistribusi.xlsx');
 
