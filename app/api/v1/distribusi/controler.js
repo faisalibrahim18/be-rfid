@@ -14,7 +14,8 @@ const xlsx = require('xlsx');
 const Linen = require('../linen/model');
 const Category = require('../category/model');
 const Hospital = require('../hospital/model');
-const Tracker = require('../tracker/model')
+const Tracker = require('../tracker/model');
+const { BadRequestError } = require('../../../errors');
 
 
 
@@ -121,11 +122,12 @@ const download = async (req, res, next) => {
 
 
         result.forEach((item) => {
+
             const statusValue = item.status ? item.status.status : '-';
             console.log(item.linen.epc)
             worksheet.addRow({
                 customer: item.customer.name,
-                category: item.category.name ,
+                category: item.category.name,
                 linen: item.linen.epc,
                 service: item.service,
                 quality: item.quality,
@@ -239,7 +241,9 @@ const importExcel = async (req, res, next) => {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-        console.log(jsonData);
+        if (jsonData.length === 0) {
+            throw new Error('Empty data');
+        }
 
         const transformedData = jsonData.map(async (item) => {
             const hospitalName = item.Customer;
@@ -282,7 +286,7 @@ const importExcel = async (req, res, next) => {
 
 
 
-        const result = await Distribusi.insertMany(transformedformis);
+        const result = await Distribusi.create(transformedformis);
 
         res.status(200).json({
             data: result,
@@ -290,7 +294,7 @@ const importExcel = async (req, res, next) => {
         })
 
     } catch (err) {
-        res.send({ status: StatusCodes.INTERNAL_SERVER_ERROR, success: false, message: err.message });
+        next(err)
     }
 }
 

@@ -20,7 +20,7 @@ router.get('/distribusiDownload', download);
 
 router.get('/distribusiDownloadPdf', downloadDistribusiPDF);
 
-router.post('/distribusi/upload', upload.single('excel'), authenticateUser, authhorizeRoles('admin'), importExcel);
+router.post('/distribusi/upload', upload.single('excel'), importExcel);
 
 router.get('/distribusiCount', authenticateUser, count);
 
