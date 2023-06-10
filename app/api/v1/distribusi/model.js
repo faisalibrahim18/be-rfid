@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const { model, Schema } = mongoose;
-
+const linenSchema = Schema(
+    {
+        epc: {
+            type: String,
+            required: true
+        },
+        category: {
+            type: String,
+            required: true
+        }
+    }
+)
 const distribusiSchema = Schema(
     {
         customer: { 
@@ -8,15 +19,9 @@ const distribusiSchema = Schema(
             ref: 'Hospital',
             required: true
         },
-        category: {
-            type: mongoose.Types.ObjectId,
-            ref: 'Category',
-            required: true
-        },
+      
         linen : {
-            type: mongoose.Types.ObjectId,
-            ref: 'Linen',
-            required: true
+            type: [linenSchema]
         },
         service :{
             type: String,

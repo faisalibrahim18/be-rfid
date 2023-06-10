@@ -6,7 +6,7 @@ const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth
 const upload = require('../../../middlewares/multer');
 
 
-router.post('/distribusi', authenticateUser, authhorizeRoles('admin'),  create);
+router.post('/distribusi', upload.single('distribusi') ,  create);
 
 router.get('/distribusi',  index);
 

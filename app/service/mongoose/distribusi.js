@@ -4,37 +4,59 @@ const { checkHospital } = require('./hospital');
 const { checkCategory } = require('./category');
 const { checkStatus } = require('./tracker');
 const { checkLinen } = require('./linen');
+const Linen = require('../../api/v1/linen/model')
+const xlsx = require('xlsx');
 
 
 
 const createDistribusi = async (req, res, next) => {
     const {
         customer,
-        category,
         quality,
-        linen,
         service,
         dateIn,
         dateOut,
         weight,
-        amount,
         note
     } = req.body;
 
-    await checkCategory(category);
-    await checkHospital(customer);
-    await checkLinen(linen);
+
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const count = jsonData.length;
+
+    const transformedData = jsonData.map(async (item) => {
+        const codeEpc = item.EPC;
+
+        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
+            populate({
+                path: 'category',
+                select: 'name'
+            })
+
+        if (Category) {
+            item.category = Category.category.name;
+        }
+        const transformedItem = {
+            epc: item.EPC,
+            category: Category ? Category.category.name : null
+        }
+        return transformedItem
+    })
+    const transformedformis = await Promise.all(transformedData);
 
 
     const result = await Distribusi.create({
         customer,
-        category,
         quality,
-        linen,
+        linen: transformedformis,
         service,
         dateIn,
         dateOut,
-        amount,
+        amount: count,
         weight,
         note,
         status: null
