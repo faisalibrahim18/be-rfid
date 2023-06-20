@@ -3,8 +3,6 @@ const { NotFoundError, BadRequestError } = require('../../errors');
 
 const createCategory = async (req) => {
     const { name  } = req.body;
-
-
     const checkName = await Category.findOne({ name: name })
 
     if (checkName) throw new BadRequestError(`Name Category has been created`);

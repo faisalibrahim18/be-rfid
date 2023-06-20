@@ -16,7 +16,7 @@ const Linen = require('./model');
 
 const exceljs = require('exceljs');
 const { NotFoundError, BadRequestError } = require('../../../errors');
-
+const Hospital = require('../hospital/model');
 
 
 
@@ -110,6 +110,8 @@ const importExcel = async (req, res, next) => {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
+        const count = jsonData.length;
+
         if (!workbook) throw new BadRequestError('file required')
 
         for (const item of jsonData) {
@@ -119,6 +121,16 @@ const importExcel = async (req, res, next) => {
             }
         }
 
+        if (hospital) {
+            await Hospital.findByIdAndUpdate(
+                { _id: hospital },
+                {
+                    $inc: { stock: count } 
+                },
+                { new: true, runValidators: true }
+            )
+        }
+        
 
         const transformedData = jsonData.map((item, index) => {
             const codeNumber = index + 1;

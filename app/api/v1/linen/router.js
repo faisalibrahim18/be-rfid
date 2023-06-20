@@ -18,9 +18,9 @@ router.delete('/linen/:id',authenticateUser, authhorizeRoles('admin'), destroy);
 
 router.post('/importLinen', upload,  importExcel);
 
-router.get('/exportLinen', exportExcel )
+router.get('/exportLinen', exportExcel);
 
-router.get('/hospital/:id/linen', countByHospital)
+router.get('/hospital/:id/linen', countByHospital);
 
 
 module.exports = router;

@@ -18,7 +18,7 @@ const createLinen = async (req) => {
 
 const getAllLinen = async (req) => {
     const result = await Linen.find()
-        .select('epc category date hospital')
+        .select('epc category date hospital counter code')
         .populate({
             path: 'category',
             select: 'name'
@@ -85,7 +85,9 @@ const countLinen = async () => {
 
 const countLinenByHospital = async (req) => {
     const  idHospital   = req.params.id;
-    const result = await Linen.countDocuments({ hospital: idHospital })
+    const Linen = await Linen.countDocuments({ hospital: idHospital })
+
+
 
     return result 
 }
