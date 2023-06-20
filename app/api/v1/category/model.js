@@ -12,6 +12,14 @@ const categorySchema = Schema(
         expired: {
             type: Date,
             required: true,
+        },
+        unit : {
+            type: String,
+            required: true
+        },
+        status: {
+            type: String,
+            required: true
         }
     },
     { timestamps: true }

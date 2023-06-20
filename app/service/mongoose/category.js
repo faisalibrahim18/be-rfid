@@ -2,14 +2,15 @@ const Category = require('../../api/v1/category/model');
 const { NotFoundError, BadRequestError } = require('../../errors');
 
 const createCategory = async (req) => {
-    const { name  } = req.body;
+    const { name, unit, expired  } = req.body;
     const checkName = await Category.findOne({ name: name })
 
     if (checkName) throw new BadRequestError(`Name Category has been created`);
 
     const result = await Category.create({
         name: name,
-        expired: expired
+        expired: expired,
+        unit: unit
     })
 
     return result;
@@ -39,7 +40,7 @@ const getOneCategory = async (req) => {
 
 const updateCategory = async (req) => {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, unit, expired  } = req.body;
 
     const checkName = await Category.findOne({
         name,
@@ -51,6 +52,8 @@ const updateCategory = async (req) => {
         { _id: id },
         {
             name: name,
+            expired: expired,
+            unit: unit
         },
         { new: true, runValidators: true }
 

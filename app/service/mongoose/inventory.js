@@ -2,14 +2,14 @@ const Inventory = require('../../api/v1/inventory/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
 
 const createInventory = async (req, res) => {
-    const { kode, name, amount } = req.body;
+    const { kode, name, amount, status } = req.body;
 
     const checkKode = await Inventory.findOne({ kode: kode })
 
     if (checkKode) throw new BadRequestError(`Kode already exists`);
 
     const result = await Inventory.create({
-        kode, name, amount
+        kode, name, amount, status
     })
 
     return result
@@ -37,12 +37,15 @@ const getOneInventory = async (req) => {
 
 const updateInventory = async (req, res) => {
     const { id } = req.params;
-    const { kode, name, amount } = req.body;
+    const { kode, name, amount, status } = req.body;
 
     const checkKode = await Inventory.findOne(
         {
             kode,
-            _id: { $ne: id }
+            _id: { $ne: id },
+            status,
+            name,
+            amount
         },
     )
 
