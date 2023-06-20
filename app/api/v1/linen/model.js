@@ -12,19 +12,17 @@ const linenSchema = Schema(
             ref: 'Category',
             required: true
         },
-        quality: {
-            type: mongoose.Types.ObjectId,
-            ref: 'Quality',
-            // required: [true, 'kualitas harus di isi']
+        code: {
+            type: String,
         },
-        // customer: {
-        //     type: mongoose.Types.ObjectId,
-        //     ref: 'Hospital',
-        //     required: [true, 'Customer Harus di isi']
-        // },  
+        hospital: {
+            type: mongoose.Types.ObjectId,
+            ref: 'Hospitals'
+        },
         date: {
             type: Date,
-        }
+        },
+        
     },
     { timestamps: true }
 )

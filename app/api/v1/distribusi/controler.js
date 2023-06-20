@@ -93,7 +93,7 @@ const download = async (req, res, next) => {
         worksheet.columns = [
             { header: 'Customer', key: 'customer', width: 30, alignment: { horizontal: 'middle' } },
             { header: 'Category', key: 'category', width: 20, alignment: { horizontal: 'middle' } },
-            { header: 'Linen', key: 'linen', width: 20, alignment: { horizontal: 'middle' } },
+            { header: 'Linen', key: 'linen', width: 40, alignment: { horizontal: 'middle' } },
             { header: 'Service', key: 'service', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Quality', key: 'quality', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Status', key: 'status', width: 20, alignment: { horizontal: 'middle' } },
@@ -120,22 +120,22 @@ const download = async (req, res, next) => {
             };
         });
 
-
-        result.forEach((item) => {
-
-            const statusValue = item.status ? item.status.status : '-';
-            console.log(item.linen.epc)
-            worksheet.addRow({
-                customer: item.customer.name,
-                category: item.category.name,
-                linen: item.linen.epc,
-                service: item.service,
-                quality: item.quality,
-                status: statusValue,
-                dateIn: item.dateIn,
-                dateOut: item.dateOut,
-                amount: item.amount,
-                weight: item.weight,
+        result.forEach(item => {
+            item.linen.forEach(linen => {
+                const statusValue = item.status ? item.status.status : '-';
+        
+                worksheet.addRow({
+                    customer: item.customer.name,
+                    category: linen.category,
+                    linen: linen.epc,
+                    service: item.service,
+                    quality: item.quality,
+                    status: statusValue,
+                    dateIn: item.dateIn,
+                    dateOut: item.dateOut,
+                    amount: item.amount,
+                    weight: item.weight,
+                });
             });
         });
 

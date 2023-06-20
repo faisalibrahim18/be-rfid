@@ -4,6 +4,15 @@ const { model, Schema} = mongoose;
 const categorySchema = Schema(
     {
         name: { type: String, required: [true, 'Nama tidak boleh kosong'], unique: true },
+        date: {
+            type: Date,
+            required: true,
+            default: new Date()
+        },
+        expired: {
+            type: Date,
+            required: true,
+        }
     },
     { timestamps: true }
 );

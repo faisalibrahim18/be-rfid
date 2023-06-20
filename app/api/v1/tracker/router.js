@@ -27,19 +27,19 @@ router.get('/tracker/:id', find);
 
 router.get('/trackerCount', count);
 
-router.put('/tracker/checking/:id', upload.single('check'),checking);
+router.put('/tracker/checking/:id', upload,checking);
 
 router.put('/tracker/transit/:id', transit);
 
-router.put('/tracker/accepted/:id', upload.single('accept') ,accepted);
+router.put('/tracker/accepted/:id', upload,accepted);
 
-router.put('/tracker/wash/:id', upload.single('wash'), wash);
+router.put('/tracker/wash/:id', upload, wash);
 
-router.put('/tracker/dry/:id', upload.single('dry'), dry);
+router.put('/tracker/dry/:id', upload, dry);
 
 router.put('/tracker/delivery/:id', backHospital)
 
-router.put('/tracker/done/:id', upload.single('done') ,done);
+router.put('/tracker/done/:id', upload ,done);
 
 router.get('/tracker/exportWash/:id', exportWash)
 

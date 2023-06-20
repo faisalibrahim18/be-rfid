@@ -18,6 +18,7 @@ const { NotFoundError, BadRequestError } = require('../../../errors');
 
 
 
+
 const create = async (req, res, next) => {
     try {
         const result = await createLinen(req)
@@ -97,7 +98,7 @@ const count = async (req, res, next) => {
 const importExcel = async (req, res, next) => {
     try {
 
-        const { category } = req.body;
+        const { category, hospital, code  } = req.body;
 
         if (!category) throw new BadRequestError('category required')
         
@@ -113,7 +114,7 @@ const importExcel = async (req, res, next) => {
         for (const item of jsonData) {
             const existingLinen = await Linen.findOne({ epc: item.EPC });
             if (existingLinen) {
-                return res.send({ status: StatusCodes.BAD_REQUEST, message: 'Duplicate EPC' });
+                return res.status(StatusCodes.BAD_REQUEST).send({message: 'Duplicate EPC'}) ;
             }
         }
 
@@ -121,9 +122,10 @@ const importExcel = async (req, res, next) => {
             const transformedItem = {
                 epc: item.EPC,
                 date: new Date(),
-                category: category
+                category: category,
+                code: code,
+                hospital: hospital
             }
-
             return transformedItem
         })
 
@@ -131,12 +133,16 @@ const importExcel = async (req, res, next) => {
 
         const result = await Linen.create(transformedData)
 
+
+
         res.status(StatusCodes.OK).json({
             message: "import linen success",
             data: result
         })
     } catch (err) {
         next(err)
+        console.log(err)
+        console.log(req.file.filename)
     }
 }
 

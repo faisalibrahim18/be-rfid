@@ -83,14 +83,7 @@ const getAllDistribusi = async (req, res, next) => {
             select: '_id name  number_phone  address'
 
         })
-        .populate({
-            path: 'category',
-            select: 'id name'
-        })
-        .populate({
-            path: 'linen',
-            select: 'epc category date'
-        })
+      
         .populate({
             path: 'status',
             select: 'status checking transit accepted wash dry done'

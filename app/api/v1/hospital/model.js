@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { model, Schema } = mongoose;
 
+
 const hospitalSchema  = Schema(
     {
         name: { type: String, required: [true, 'nama rumah sakit  harus di isi'], unique: true },

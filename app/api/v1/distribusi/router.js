@@ -6,7 +6,7 @@ const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth
 const upload = require('../../../middlewares/multer');
 
 
-router.post('/distribusi', upload.single('distribusi') ,  create);
+router.post('/distribusi', upload ,  create);
 
 router.get('/distribusi',  index);
 
@@ -20,7 +20,7 @@ router.get('/distribusiDownload', download);
 
 router.get('/distribusiDownloadPdf', downloadDistribusiPDF);
 
-router.post('/distribusi/upload', upload.single('excel'), importExcel);
+router.post('/distribusi/upload', upload, importExcel);
 
 router.get('/distribusiCount', authenticateUser, count);
 
