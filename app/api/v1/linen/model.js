@@ -17,11 +17,15 @@ const linenSchema = Schema(
         },
         hospital: {
             type: mongoose.Types.ObjectId,
-            ref: 'Hospitals'
+            ref: 'Hospital'
         },
         date: {
             type: Date,
         },
+        counter:{
+            type: Number,
+            default: 0
+        }
         
     },
     { timestamps: true }

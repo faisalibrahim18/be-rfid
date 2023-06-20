@@ -2,7 +2,7 @@ const Category = require('../../api/v1/category/model');
 const { NotFoundError, BadRequestError } = require('../../errors');
 
 const createCategory = async (req) => {
-    const { name, expired } = req.body;
+    const { name  } = req.body;
 
 
     const checkName = await Category.findOne({ name: name })
@@ -21,7 +21,7 @@ const createCategory = async (req) => {
 const getAllCategory = async (req) => {
 
     const result = await Category.find()
-        .select('name')
+        .select('name expired date')
 
     if (!result) throw new NotFoundError('Tidak ada Category');
 
@@ -41,7 +41,7 @@ const getOneCategory = async (req) => {
 
 const updateCategory = async (req) => {
     const { id } = req.params;
-    const { name, expired } = req.body;
+    const { name } = req.body;
 
     const checkName = await Category.findOne({
         name,
@@ -53,7 +53,6 @@ const updateCategory = async (req) => {
         { _id: id },
         {
             name: name,
-            expired: expired
         },
         { new: true, runValidators: true }
 

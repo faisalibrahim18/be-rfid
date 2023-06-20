@@ -18,9 +18,13 @@ const createLinen = async (req) => {
 
 const getAllLinen = async (req) => {
     const result = await Linen.find()
-        .select('epc category date')
+        .select('epc category date hospital')
         .populate({
             path: 'category',
+            select: 'name'
+        })
+        .populate({
+            path: 'hospital',
             select: 'name'
         })
     if (!result) throw new NotFoundError('Linen not found');
@@ -79,6 +83,13 @@ const countLinen = async () => {
     return result
 }
 
+const countLinenByHospital = async (req) => {
+    const  idHospital   = req.params.id;
+    const result = await Linen.countDocuments({ hospital: idHospital })
+
+    return result 
+}
+
 
 module.exports = {
     createLinen,
@@ -88,4 +99,5 @@ module.exports = {
     deleteLinen,
     checkLinen,
     countLinen,
+    countLinenByHospital
 };

@@ -390,65 +390,74 @@ const dryTracker = async (req) => {
 
 const doneTracker = async (req) => {
     const { id } = req.params;
-
-    const {
-        name,
-        email,
-        no_hp,
-        note,
-        heavy,
-        
-    } = req.body;
-
+  
+    const { name, email, no_hp, note, heavy } = req.body;
+  
     const workbook = xlsx.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = xlsx.utils.sheet_to_json(worksheet);
-
+  
     const count = jsonData.length;
-
-    const transformedData = jsonData.map(async (item) => {
-        const codeEpc = item.EPC;
-
-        const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
-            populate({
-                path: 'category',
-                select: 'name'
-            })
-
-        if (Category) {
-            item.category = Category.category.name;
-        }
-        const transformedItem = {
-            epc: item.EPC,
-            category: Category ? Category.category.name : null
-        }
-        return transformedItem
-    })
-
-    const transformedformis = await Promise.all(transformedData);
-
+  
+    const transformedData = [];
+  
+    for (const item of jsonData) {
+      const codeEpc = item.EPC;
+  
+      const linen = await Linen.findOne({ epc: codeEpc }).populate('category');
+  
+      let counter = 0;
+  
+      if (linen) {
+        item.category = linen.category.name;
+  
+        // Tambahkan counter sebanyak satu
+        counter = await counterPlus(linen);
+      }
+  
+      const transformedItem = {
+        epc: item.EPC,
+        category: linen ? linen.category.name : null,
+        counter: counter,
+      };
+  
+      transformedData.push(transformedItem);
+    }
+  
     const result = await Tracker.findByIdAndUpdate(
-        { _id: id },
-        {
-            status: 'success',
-            done: {
-                name: name,
-                email: email,
-                no_hp: no_hp,
-                note: note,
-                heavy: heavy,
-                amount: count,
-                linen: transformedformis
-            }
+      { _id: id },
+      {
+        status: 'success',
+        done: {
+          name: name,
+          email: email,
+          no_hp: no_hp,
+          note: note,
+          heavy: heavy,
+          amount: count,
+          linen: transformedData,
         },
-        { new: true, runValidators: true }
-    )
-
-    if (!result) throw new NotFoundError('Tracker not found')
-
+      },
+      { new: true, runValidators: true }
+    );
+  
+    if (!result) throw new NotFoundError('Tracker not found');
+  
     return result;
-}
+  };
+  
+  const counterPlus = async (linen) => {
+    try {
+      linen.counter += 1;
+      await linen.save();
+      return linen.counter;
+    } catch (error) {
+      console.error('Failed to increment counter:', error);
+      throw error;
+    }
+  };
+  
 
 
 

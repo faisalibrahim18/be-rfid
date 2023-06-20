@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express();
-const { create, index, update, find, destroy, count, importExcel, exportExcel } = require('./controller');
+const { create, index, update, find, destroy, count, importExcel, exportExcel, countByHospital } = require('./controller');
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 const upload = require('../../../middlewares/multer');
 
@@ -19,6 +19,8 @@ router.delete('/linen/:id',authenticateUser, authhorizeRoles('admin'), destroy);
 router.post('/importLinen', upload,  importExcel);
 
 router.get('/exportLinen', exportExcel )
+
+router.get('/hospital/:id/linen', countByHospital)
 
 
 module.exports = router;

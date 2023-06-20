@@ -5,8 +5,9 @@ const { createLinen,
     updateLinen,
     deleteLinen,
     countLinen,
+    countLinenByHospital
 } = require('../../../service/mongoose/linen');
-const { checkCategory } = require('../../../service/mongoose/category') 
+const { checkCategory } = require('../../../service/mongoose/category')
 
 const { StatusCodes } = require('http-status-codes');
 const xlsx = require('xlsx');
@@ -98,27 +99,30 @@ const count = async (req, res, next) => {
 const importExcel = async (req, res, next) => {
     try {
 
-        const { category, hospital, code  } = req.body;
+        const { category, hospital } = req.body;
 
         if (!category) throw new BadRequestError('category required')
-        
-        await checkCategory(category);  
+
+        await checkCategory(category);
 
         const workbook = xlsx.readFile(req.file.path);
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
-        
+
         if (!workbook) throw new BadRequestError('file required')
 
         for (const item of jsonData) {
             const existingLinen = await Linen.findOne({ epc: item.EPC });
             if (existingLinen) {
-                return res.status(StatusCodes.BAD_REQUEST).send({message: 'Duplicate EPC'}) ;
+                return res.status(StatusCodes.BAD_REQUEST).send({ message: 'Duplicate EPC' });
             }
         }
 
-        const transformedData = jsonData.map((item) => {
+
+        const transformedData = jsonData.map((item, index) => {
+            const codeNumber = index + 1;
+            const code = `A${codeNumber.toString().padStart(6, '0')}`;
             const transformedItem = {
                 epc: item.EPC,
                 date: new Date(),
@@ -129,11 +133,7 @@ const importExcel = async (req, res, next) => {
             return transformedItem
         })
 
-
-
         const result = await Linen.create(transformedData)
-
-
 
         res.status(StatusCodes.OK).json({
             message: "import linen success",
@@ -150,7 +150,7 @@ const importExcel = async (req, res, next) => {
 const exportExcel = async (req, res, next) => {
     try {
         const result = await getAllLinen()
-        
+
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('linen');
 
@@ -160,7 +160,7 @@ const exportExcel = async (req, res, next) => {
             { header: 'Category', key: 'category', width: 20, alignment: { horizontal: 'middle' } },
             { header: 'Date', key: 'date', width: 20, alignment: { horizontal: 'middle' } },
         ];
-        
+
         worksheet.getRow(1).fill = {
             type: 'pattern',
             pattern: 'solid',
@@ -179,13 +179,13 @@ const exportExcel = async (req, res, next) => {
         });
 
         result.forEach((item, index) => {
-            const categoryValue = item.category ? item.category.name : '-';           
+            const categoryValue = item.category ? item.category.name : '-';
             worksheet.addRow({
                 no: index + 1,
                 epc: item.epc,
                 category: categoryValue,
                 date: item.date
-            })                                                                                                                                                                                                                                                                                                                                                                                                           
+            })
         })
 
         await workbook.xlsx.writeFile('linen.xlsx');
@@ -195,4 +195,17 @@ const exportExcel = async (req, res, next) => {
     }
 }
 
-module.exports = { create, index, find, update, destroy, count, importExcel, exportExcel }
+const countByHospital = async (req, res, next) => {
+
+    try {
+        const result = await countLinenByHospital(req)
+
+        res.status(StatusCodes.OK).send({
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+module.exports = { create, index, find, update, destroy, count, importExcel, exportExcel, countByHospital }

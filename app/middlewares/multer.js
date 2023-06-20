@@ -34,16 +34,15 @@ const uploadMiddleware = multer({
     fileSize: 3000000,
   },
   fileFilter: fileFilter,
-}).single('file'); // Ganti 'file' dengan nama field file pada form
+}).single('file');
 
-// Middleware untuk menghapus file setelah diunggah
 const uploadAndDeleteMiddleware = (req, res, next) => {
   uploadMiddleware(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ msg: err.message });
     } else if (err) {
       return res.status(400).json({ msg: 'Unknown error occurred' });
-    } if (req.file.path) {
+    } if (req.file) {
       // fs.unlink(path.join(__dirname, '..', '..',  'public', 'uploads', req.file.filename), function (error) {
       //   if (error) {
       //     console.log('Failed to delete the file:', error);
