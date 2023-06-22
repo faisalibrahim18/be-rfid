@@ -20,7 +20,7 @@ const createCategory = async (req) => {
 const getAllCategory = async (req) => {
 
     const result = await Category.find()
-        .select('name expired date')
+        .select('name unit expired date')
 
     if (!result) throw new NotFoundError('Tidak ada Category');
 
@@ -31,7 +31,7 @@ const getOneCategory = async (req) => {
     const { id } = req.params;
 
     const result = await Category.findOne({ _id: id })
-        .select('name')
+        .select('name unit expired date')
 
     if (!result) throw new NotFoundError(`Category dengan ${id} tidak ditemukan`);
 

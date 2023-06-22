@@ -46,7 +46,5 @@ router.put('/tracker/done/:id', upload ,done);
 router.get('/tracker/exportWash/:id', exportWash)
 
 
-router.get('/tracker/serahTerima/:id', serahTerima)
 
-router.get('/tracker/generatePDFSerahTerima/:id', generatePdf);
 module.exports = router;

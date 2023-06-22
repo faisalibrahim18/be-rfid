@@ -6,6 +6,8 @@ const { checkStatus } = require('./tracker');
 const { checkLinen } = require('./linen');
 const Linen = require('../../api/v1/linen/model')
 const xlsx = require('xlsx');
+const Hospital = require('../../api/v1/hospital/model');
+
 
 
 
@@ -24,20 +26,36 @@ const createDistribusi = async (req, res, next) => {
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-    const count = jsonData.length;
+    const count = jsonData.length;    
+    
 
-    const transformedData = jsonData.map(async (item) => {
+    const transformedData = jsonData.map(async (item, index) => {
         const codeEpc = item.EPC;
 
         const Category = await Linen.findOne({ epc: codeEpc }, 'epc').
             populate({
                 path: 'category',
                 select: 'name'
+            }).populate({
+                path: 'hospital',
+                select: 'name'
             })
 
+         if (!Category) throw new BadRequestError('Linen ada yang belum terdaftar')
+            console.log(index)
         if (Category) {
             item.category = Category.category.name;
-        }
+            if (Category.hospital) {
+                await Hospital.findByIdAndUpdate(
+                    { _id: Category.hospital._id },
+                    {
+                        $inc: { stock: -count  } 
+                    },
+                    { new: true, runValidators: true }
+                )
+            }
+            
+        } 
         const transformedItem = {
             epc: item.EPC,
             category: Category ? Category.category.name : null
@@ -46,6 +64,7 @@ const createDistribusi = async (req, res, next) => {
     })
     const transformedformis = await Promise.all(transformedData);
 
+    
 
     const result = await Distribusi.create({
         customer,

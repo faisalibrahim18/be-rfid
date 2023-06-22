@@ -157,63 +157,7 @@ const exportWash = async (req, res, next) => {
 }
 
 
-const serahTerima = async (req, res, next) => {
-    try {
-        const tracker = await getOneTracker(req);
-        const filePath = path.join(__dirname, "../../../../views/serah.ejs")
-        ejs.renderFile(filePath, { tracker }, (err, html) => {
-            if (err) {
-                console.log(err)
-            }
-            return res.send(html)
-        })
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Failed to generate or send PDF');
-        next
-    }
-};
-
-const generatePdf = async (req, res, next) => {
-    try {
-        const { id } = req.params
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
-        await page.goto(`http://localhost:9000/api/v1/rfid/tracker/serahTerima/${id}`,
-            {
-                waitUntil: 'networkidle0'
-            });
-
-
-        const pdf = await page.pdf({
-            format: 'A4',
-            printBackground: true,
-        });
-
-        await browser.close();
-
-        const filePath = path.join(__dirname, 'report.pdf');
-        fs.writeFileSync(filePath, pdf);
-
-       
-
-        res.download(filePath, 'serahterima.pdf', (err) => {
-            if (err) {
-                console.error(err);
-                return next(err);
-            }
-
-            fs.unlinkSync(filePath);
-        });
-
-
-
-    } catch (err) {
-        next(err)
-    }
-}
 module.exports = {
     create,
     checking,
@@ -226,7 +170,6 @@ module.exports = {
     count,
     exportWash,
     backHospital,
-    serahTerima,
-    generatePdf
+    
 }
 
