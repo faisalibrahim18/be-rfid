@@ -192,7 +192,7 @@ const downloadTemplateExcel = async (req, res, next) => {
 }
 const downloadDistribusiPDF = async (req, res, next) => {
     try {
-        const distribusi = await getAllDistribusi(req)
+        const distribusi = await getAllDistribusi(req);
 
         const data = {
             distribusi: distribusi
@@ -205,30 +205,23 @@ const downloadDistribusiPDF = async (req, res, next) => {
             format: 'Letter'
         };
 
-        pdf.create(ejsData, options).toFile('distribusi.pdf', (err, response) => {
+        pdf.create(ejsData, options).toBuffer(async (err, buffer) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send('Failed to generate PDF');
             }
 
-            const filePath = path.resolve(__dirname, '../../../../distribusi.pdf')
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment;filename="distribusi.pdf"');
 
-            fs.readFile(filePath, (err, file) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not download PDF');
-                }
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', 'attachment;filename="distribusi.pdf"');
-
-                res.send(file);
-            });
+            res.send(buffer);
         });
     } catch (err) {
         console.log(err.message);
         return res.status(500).send('Failed to generate PDF');
     }
 };
+
 
 const importExcel = async (req, res, next) => {
     try {

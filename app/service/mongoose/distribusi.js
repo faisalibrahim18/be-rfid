@@ -13,9 +13,7 @@ const createDistribusi = async (req, res, next) => {
     const {
         customer,
         quality,
-        service,
-        dateIn,
-        dateOut,
+        service,   
         weight,
         note
     } = req.body;
@@ -54,8 +52,7 @@ const createDistribusi = async (req, res, next) => {
         quality,
         linen: transformedformis,
         service,
-        dateIn,
-        dateOut,
+        dateIn: Date.now(),
         amount: count,
         weight,
         note,

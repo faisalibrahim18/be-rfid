@@ -17,7 +17,7 @@ const createInventory = async (req, res) => {
 
 const getAllInventory = async (req) => {
     const result = await Inventory.find()
-        .select('kode name amount')
+        .select('kode name amount status')
 
     if (!result) throw new NotFoundError('Inventory not found');
 

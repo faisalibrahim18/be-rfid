@@ -28,7 +28,7 @@ app.set('view engine', 'ejs');
 app.use(
     cors({
         credentials: true,
-        origin: "http://127.0.0.1:5173",
+        origin: "http://localhost:5173",
     }),
 );
 app.use(logger('dev'));
@@ -36,6 +36,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
     res.status(200).json({

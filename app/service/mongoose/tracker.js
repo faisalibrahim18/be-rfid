@@ -3,9 +3,12 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const xlsx = require('xlsx');
 const Linen = require('../../api/v1/linen/model');
 const ExcelJS = require('exceljs');
-const { json } = require('express');
+const path = require('path')
 
 const fs = require('fs');
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const pdf = require('html-pdf')
 
 const createTracker = async (req) => {
 
@@ -20,9 +23,7 @@ const getOneTracker = async (req) => {
 
     const { id } = req.params
     const result = await Tracker.findOne({ _id: id })
-        .select('status checking transit accepted wash dry done');
-    console.log(result.createdAt)
-
+        .select('status checking transit accepted wash dry returned done');
     if (!result) throw new BadRequestError('id not found')
 
     return result;
@@ -313,7 +314,7 @@ const dryTracker = async (req) => {
         return transformedItem
     })
 
-    const transformedformis = await Promise.all(transformedData);   
+    const transformedformis = await Promise.all(transformedData);
 
     const tracker = await Tracker.findById(id);
 
@@ -345,20 +346,20 @@ const dryTracker = async (req) => {
     return result;
 }
 
-    const deliveryToHospital = async (req) => {
-        const { id } = req.params;
-        const {
-            name,
-            email,
-            no_hp,
-            vehicle,
-            license,
-            amount,
-            heavy,
-            note,
-        } = req.body;
+const deliveryToHospital = async (req) => {
+    const { id } = req.params;
+    const {
+        name,
+        email,
+        no_hp,
+        vehicle,
+        license,
+        amount,
+        heavy,
+        note,
+    } = req.body;
 
-        const tracker = await Tracker.findById(id);
+    const tracker = await Tracker.findById(id);
 
     if (!tracker) throw new NotFoundError('Tracker not found');
 
@@ -390,74 +391,73 @@ const dryTracker = async (req) => {
 
 const doneTracker = async (req) => {
     const { id } = req.params;
-  
+
     const { name, email, no_hp, note, heavy } = req.body;
-  
+
     const workbook = xlsx.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = xlsx.utils.sheet_to_json(worksheet);
-  
+
     const count = jsonData.length;
-  
+
     const transformedData = [];
-  
+
     for (const item of jsonData) {
-      const codeEpc = item.EPC;
-  
-      const linen = await Linen.findOne({ epc: codeEpc }).populate('category');
-  
-      let counter = 0;
-  
-      if (linen) {
-        item.category = linen.category.name;
-  
-        // Tambahkan counter sebanyak satu
-        counter = await counterPlus(linen);
-      }
-  
-      const transformedItem = {
-        epc: item.EPC,
-        category: linen ? linen.category.name : null,
-        counter: counter,
-      };
-  
-      transformedData.push(transformedItem);
+        const codeEpc = item.EPC;
+
+        const linen = await Linen.findOne({ epc: codeEpc }).populate('category');
+
+        let counter = 0;
+
+        if (linen) {
+            item.category = linen.category.name;
+
+            counter = await counterPlus(linen);
+        }
+
+        const transformedItem = {
+            epc: item.EPC,
+            category: linen ? linen.category.name : null,
+            counter: counter,
+        };
+
+        transformedData.push(transformedItem);
     }
-  
+
     const result = await Tracker.findByIdAndUpdate(
-      { _id: id },
-      {
-        status: 'success',
-        done: {
-          name: name,
-          email: email,
-          no_hp: no_hp,
-          note: note,
-          heavy: heavy,
-          amount: count,
-          linen: transformedData,
+        { _id: id },
+        {
+            status: 'success',
+            done: {
+                name: name,
+                email: email,
+                no_hp: no_hp,
+                note: note,
+                heavy: heavy,
+                amount: count,
+                linen: transformedData,
+            },
         },
-      },
-      { new: true, runValidators: true }
+        { new: true, runValidators: true }
     );
-  
+
     if (!result) throw new NotFoundError('Tracker not found');
-  
+
     return result;
-  };
-  
-  const counterPlus = async (linen) => {
+};
+
+const counterPlus = async (linen) => {
     try {
-      linen.counter += 1;
-      await linen.save();
-      return linen.counter;
+        linen.counter += 1;
+        await linen.save();
+        return linen.counter;
     } catch (error) {
-      console.error('Failed to increment counter:', error);
-      throw error;
+        console.error('Failed to increment counter:', error);
+        throw error;
     }
-  };
-  
+};
+
 
 
 
@@ -529,6 +529,33 @@ const exportWashTracker = async (req, res) => {
 
 }
 
+
+const serahTerimaPdf = async (req) => {
+    const { id } = req.params
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+
+
+    // Meload file EJS
+    const url = await page.goto(`http://localhost:9000/api/v1/rfid/tracker/serahTerima/${id}`,
+        {
+            waitUntil: 'networkidle0'
+        });
+
+
+    await page.pdf({
+        path: 'serahterima.pdf', 
+        format: 'A4', 
+        printBackground: true,
+    });
+
+    await browser.close();
+
+    return pdfPath;
+};
+
+
 module.exports = {
     createTracker,
     checkStatus,
@@ -541,7 +568,8 @@ module.exports = {
     getOneTracker,
     countTrackers,
     exportWashTracker,
-    deliveryToHospital
+    deliveryToHospital,
+    serahTerimaPdf
 }
 
 

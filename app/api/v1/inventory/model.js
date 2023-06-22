@@ -10,6 +10,10 @@ const inventorySchema = Schema(
         amount: {
             type: Number, 
             required: [true, 'amount harus di isi']
+        },
+        status: {
+            type: String,
+            required: true
         }
     },
     { timestamps: true}

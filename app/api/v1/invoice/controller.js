@@ -95,24 +95,16 @@ const exportPdf = async (req, res, next) => {
         };
 
         
-        pdf.create(ejsData, options).toFile('invoice.pdf', (err, response) => {
+         pdf.create(ejsData, options).toBuffer(async (err, buffer) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send('Failed to generate PDF');
             }
-            const filePath = path.resolve(__dirname, '../../../../invoice.pdf')
 
-            
-            fs.readFile(filePath, (err, file) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Could not download PDF');
-                }
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', 'attachment;filename="invoice.pdf"');
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment;filename="invoice.pdf"');
 
-                res.send(file);
-            });
+            res.send(buffer);
         });
     } catch (err) {
         console.log(err.message);

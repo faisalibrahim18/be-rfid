@@ -42,7 +42,6 @@ const distribusiSchema = Schema(
         },
         dateOut:{
             type: Date,
-            required: true
         },
         amount: {
             type:Number,

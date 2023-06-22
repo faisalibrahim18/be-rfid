@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+</head>
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        width: 100%;
+    }
+    body h1{
+        text-align: center;
+        margin-top: 50px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        margin-bottom: 50px;
+    }
+
+    body p{
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .container-surat {
+        max-width: 21cm;
+        margin: 0 auto;
+        min-height: 29.7cm;
+        border-radius: 10px;
+        border: 1px solid black;
+        margin-top: 100px; /*style doang*/
+    }
+    .content-surat{
+        height: 700px;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 0 0 90px;
+    }
+    .content-surat p.top{
+        position: relative;
+        top: -35px;
+        text-align: start;
+    }
+    .content-surat p.top.idk{
+        position: relative;
+        top: 30px;
+        text-align: start;
+    }
+    .content-surat p.top span{
+        text-transform: uppercase;
+    }
+    .data-surat{
+        position: relative;
+        top: -15px;
+    }
+    .data-surat-two{
+        top: -30px;
+        position: relative;
+    }
+    .data-surat-two p{
+        text-align: start;
+    }
+    .data-surat-two p.top{
+        text-align: start;
+        position: relative;
+        top: -15px;
+    }
+    .data-surat-two p span{
+        text-transform: uppercase;
+    }
+    .title-surat{
+        position: absolute;
+        margin: 0 auto;
+    }
+    .isi-surat{
+        text-align: start;
+        margin: 0 auto;
+        left: 190px;
+        position: relative;
+        text-transform: uppercase;
+    }
+
+    .kami-class{
+        text-align: start;
+    }
+    table{
+        margin: 0 auto;
+        left: -50px;
+        position: relative;
+    }
+    table, td, th{
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 10px 30px;
+    }
+
+    .container-tanda-tangan{
+        position: relative;
+        top: 50px;
+        display: flex;
+        flex-direction: row;
+        gap: 8rem;
+        justify-content: center;
+        left: -40px;
+    }
+
+    .container-tanda-tangan .pihak-pertama,
+    .container-tanda-tangan .pihak-kedua{
+        text-align: center;
+        width: 100%;
+        height: 200px;
+    }
+
+    .container-tanda-tangan .pihak-pertama p.top,
+    .container-tanda-tangan .pihak-kedua p.top{
+        position: relative;
+        top: -15px;
+        text-align: center;
+    }
+
+    .container-tanda-tangan .pihak-pertama p.bottom,
+    .container-tanda-tangan .pihak-kedua p.bottom{
+        position: relative;
+        top: 100px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .title-invoice{
+        display: flex;
+        justify-content: space-between;
+        height: 70px;
+        top: -30px;
+        position: relative;
+        margin: 0 70px;
+    }
+    .title-invoice h1{
+        font-size: 1.5rem;
+    }
+    .title{
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .data-invoice{
+        display: flex;
+        justify-content: space-around;
+        height: 65px;
+    }
+
+    .isi-invoice{
+        position: relative;
+        top: -15px;
+    }
+
+</style>
+<body>
+    <div class="container-surat">
+        <div class="head-surat">
+            <div class="title-invoice">
+                <h1>invoice</h1>
+                <h1>Logo</h1>
+            </div>
+            <div class="data-invoice">
+                <div class="date">
+                    <p class="title">date</p>
+                    <p class="isi-invoice">date</p>
+                </div>
+                <div class="invoice-no">
+                    <p class="title">invoice no</p>
+                    <p class="isi-invoice">number</p>
+                </div>
+                <div class="company">
+                    <p class="title">your company</p>
+                    <p class="isi-invoice">street addess</p>
+                </div>
+            </div>
+        </div>
+        <div class="body-surat">
+            <h1>Berita Acara Serah Terima Barang</h1>
+            <div class="content-surat">
+                <p class="kami-class">Kami yang bertanda tangan dibawah ini, Pada hari ini kamis, 04 Juni 2020</p>
+                <div class="data-surat">
+                    <p class="title-surat">Nama</p>
+                    <p class="isi-surat">: cv. wira adikarya</p>
+                    <p class="title-surat alamat">Alamat</p>
+                    <p class="isi-surat">: yang tahu tahu aja</p>
+                </div>
+                <div class="data-surat-two">
+                    <p>Selanjutnya disebut <span>pihak pertama</span></p>
+                    <p class="title-surat">Nama</p>
+                    <p class="isi-surat">: cv. wira adikarya</p>
+                    <p class="title-surat alamat">Alamat</p>
+                    <p class="isi-surat">: yang tahu tahu aja</p>
+                    <p class="top">Selanjutnya disebut <span>pihak kedua</span></p>
+                </div>
+                <p class="top"><span>pihak pertama</span> menyerahkan barang kepada <span>pihak kedua</span>, dan <span>pihak kedua</span> menyatakan telah mendapat barang dari <span>pihak pertama</span> berupa daftar terlampir</p>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <th>No</th>
+                            <th>Nama Barang</th>
+                            <th>Jumlah</th>
+                        </thead>
+                        <% tracker.checking.forEach((item, index) => {  %>
+                        <tbody>
+                            <td>2.</td>
+                            <td><%= item.name %></td>
+                            <td>9999 unit</td>
+                        </tbody>
+                        <% }); %>
+                    </table>
+                </div>
+                <p class="top idk">Demikianlah surat serah terima barang ini di buat oleh kedua belah pihak, semenjak penandatanganan surat ini, maka barang tersebut menjadi tanggung jawab <span>pihak kedua</span>, memelihara / merawat dengan baik serta di pergunakan untuk keperluan (tempat dimana barang itu di butuhkan)</p>
+                <div class="container-tanda-tangan">
+                    <div class="pihak-pertama">
+                        <p>Yang Menyerahkan:</p>
+                        <p class="top">PIHAK PERTAMA</p>
+                        <p class="bottom">( cv. wira adikarya )</p>
+                    </div>
+                    <div class="pihak-kedua">
+                        <p>Yang Menerima:</p>
+                        <p class="top">PIHAK KEDUA</p>
+                        <p class="bottom">( pt. lancarjaya makmur abadi )</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

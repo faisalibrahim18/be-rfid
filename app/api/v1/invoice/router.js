@@ -25,7 +25,7 @@ router.put('/invoice/:id', update);
 
 router.delete('/invoice/:id', destroy);
 
-router.get('/invoceExport', exportPdf);
+router.get('/invoiceExport', exportPdf);
 
 router.get('/invoiceUser/:userId', authenticateUser, authhorizeRoles('admin'), findByUserId)
 
