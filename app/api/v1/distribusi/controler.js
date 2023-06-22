@@ -10,6 +10,8 @@ const path = require('path');
 
 const csv = require('csvtojson')
 const xlsx = require('xlsx');
+const puppeteer = require('puppeteer')
+
 
 const Linen = require('../linen/model');
 const Category = require('../category/model');

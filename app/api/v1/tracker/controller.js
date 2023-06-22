@@ -14,7 +14,6 @@ const { StatusCodes } = require('http-status-codes');
 
 const path = require('path');
 const ejs = require('ejs')
-const puppeteer = require('puppeteer')
 
 
 const fs = require('fs')
