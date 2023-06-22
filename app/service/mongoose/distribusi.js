@@ -45,7 +45,11 @@ const createDistribusi = async (req, res, next) => {
             
         if (Category) {
             item.category = Category.category.name;
+        
             if (Category.hospital) {
+                console.log(customer)
+                if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen mulik rumah sakit lain')
+                
                 await Hospital.findByIdAndUpdate(
                     { _id: Category.hospital._id },
                     {
