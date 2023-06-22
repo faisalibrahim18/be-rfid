@@ -2,6 +2,8 @@ const Tracker = require('../../api/v1/tracker/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
 const xlsx = require('xlsx');
 const Linen = require('../../api/v1/linen/model');
+const Hospital = require('../../api/v1/hospital/model');
+
 const ExcelJS = require('exceljs');
 const path = require('path')
 
@@ -406,13 +408,24 @@ const doneTracker = async (req) => {
     for (const item of jsonData) {
         const codeEpc = item.EPC;
 
-        const linen = await Linen.findOne({ epc: codeEpc }).populate('category');
+        const linen = await Linen.findOne({ epc: codeEpc }).populate('category').populate({
+            path: 'hospital',
+            select: 'name'
+        });
 
         let counter = 0;
 
         if (linen) {
             item.category = linen.category.name;
-
+            if (linen.hospital) {
+                await Hospital.findByIdAndUpdate(
+                    { _id: linen.hospital._id },
+                    {
+                        $inc: { stock: 1  } 
+                    },
+                    { new: true, runValidators: true }
+                )
+            }
             counter = await counterPlus(linen);
         }
 

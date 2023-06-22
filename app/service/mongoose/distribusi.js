@@ -42,14 +42,14 @@ const createDistribusi = async (req, res, next) => {
             })
 
          if (!Category) throw new BadRequestError('Linen ada yang belum terdaftar')
-            console.log(index)
+            
         if (Category) {
             item.category = Category.category.name;
             if (Category.hospital) {
                 await Hospital.findByIdAndUpdate(
                     { _id: Category.hospital._id },
                     {
-                        $inc: { stock: -count  } 
+                        $inc: { stock: -1  } 
                     },
                     { new: true, runValidators: true }
                 )

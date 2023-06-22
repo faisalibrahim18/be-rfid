@@ -1,30 +1,30 @@
 const express = require('express');
 const router = express();
 const { create,
-     index,
-      update,
-       find,
-        destroy,
-         download,
-          downloadDistribusiPDF,
-           importExcel, 
-           count, 
-           downloadTemplateExcel,
-           serahTerima,
-           generatePdf
-         } = require('./controler');
+    index,
+    update,
+    find,
+    destroy,
+    download,
+    downloadDistribusiPDF,
+    importExcel,
+    count,
+    downloadTemplateExcel,
+    serahTerima,
+    generatePdf
+} = require('./controler');
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 
 const upload = require('../../../middlewares/multer');
 
 
-router.post('/distribusi', upload ,  create);
+router.post('/distribusi', upload, create);
 
-router.get('/distribusi',  index);
+router.get('/distribusi', index);
 
-router.get('/distribusi/:id', authenticateUser, authhorizeRoles('admin'),  find);
+router.get('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), find);
 
-router.put('/distribusi/:id',  update);
+router.put('/distribusi/:id', update);
 
 router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), destroy);
 
