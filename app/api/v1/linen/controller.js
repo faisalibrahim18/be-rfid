@@ -100,6 +100,7 @@ const importExcel = async (req, res, next) => {
     try {
 
         const { category, hospital } = req.body;
+        
 
         if (!category) throw new BadRequestError('category required')
 
@@ -153,8 +154,7 @@ const importExcel = async (req, res, next) => {
         })
     } catch (err) {
         next(err)
-        console.log(err)
-        console.log(req.file.filename)
+        
     }
 }
 

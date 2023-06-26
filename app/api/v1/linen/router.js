@@ -4,17 +4,17 @@ const { create, index, update, find, destroy, count, importExcel, exportExcel, c
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 const upload = require('../../../middlewares/multer');
 
-router.post('/linen',authenticateUser, authhorizeRoles('admin'), create);
+router.post('/linen', create);
 
-router.get('/linen',authenticateUser, authhorizeRoles('admin'), index);
+router.get('/linen', index);
 
-router.get('/linenCount',authenticateUser, authhorizeRoles('admin'), count);
+router.get('/linenCount', count);
 
-router.get('/linen/:id',authenticateUser, authhorizeRoles('admin'), find);
+router.get('/linen/:id', find);
 
-router.put('/linen/:id',authenticateUser, authhorizeRoles('admin'), update);
+router.put('/linen/:id', update);
 
-router.delete('/linen/:id',authenticateUser, authhorizeRoles('admin'), destroy);
+router.delete('/linen/:id', destroy);
 
 router.post('/importLinen', upload,  importExcel);
 

@@ -17,7 +17,8 @@ const linenSchema = Schema(
         },
         hospital: {
             type: mongoose.Types.ObjectId,
-            ref: 'Hospital'
+            ref: 'Hospital',
+ 
         },
         date: {
             type: Date,

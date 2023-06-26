@@ -18,6 +18,9 @@ const distribusiRouter = require('./app/api/v1/distribusi/router');
 const trackerRouter = require('./app/api/v1/tracker/router');
 const qualityRouter = require('./app/api/v1/quality/router');
 const invoisRouter = require('./app/api/v1/invoice/router');
+const accessRouter = require('./app/api/v1/access/router');
+const privilegeRouter = require('./app/api/v1/privilege/router');
+const roleRouter = require('./app/api/v1/role/router');
 
 const v1 = '/api/v1/rfid';
 
@@ -55,6 +58,9 @@ app.use(v1, distribusiRouter);
 app.use(v1, trackerRouter);
 app.use(v1, qualityRouter);
 app.use(v1, invoisRouter);
+app.use(v1, accessRouter);
+app.use(v1, privilegeRouter);
+app.use(v1, roleRouter);
 
 
 app.use(notFoundMiddleware);

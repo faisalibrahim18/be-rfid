@@ -1,9 +1,5 @@
 const Distribusi = require('../../api/v1/distribusi/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
-const { checkHospital } = require('./hospital');
-const { checkCategory } = require('./category');
-const { checkStatus } = require('./tracker');
-const { checkLinen } = require('./linen');
 const Linen = require('../../api/v1/linen/model')
 const xlsx = require('xlsx');
 const Hospital = require('../../api/v1/hospital/model');
@@ -48,7 +44,7 @@ const createDistribusi = async (req, res, next) => {
         
             if (Category.hospital) {
                 console.log(customer)
-                if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen mulik rumah sakit lain')
+                if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen milik rumah sakit lain')
                 
                 await Hospital.findByIdAndUpdate(
                     { _id: Category.hospital._id },
@@ -86,14 +82,15 @@ const createDistribusi = async (req, res, next) => {
 }
 
 const getAllDistribusi = async (req, res, next) => {
-    const { dateIn, dateOut } = req.query;
+    const { startDate, endDate } = req.query;
     let condition = {};
-
-    if (dateIn) {
-        condition.dateIn = { $gte: new Date(dateIn) };
-    }
-    if (dateOut) {
-        condition.dateOut = { $lte: new Date(dateOut) };
+  
+    if (startDate && endDate) {
+      condition.dateIn = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    } else if (startDate) {
+      condition.dateIn = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      condition.dateIn = { $lte: new Date(endDate) };
     }
 
 
@@ -174,6 +171,10 @@ const   deleteDistrbusi = async (req, res, next) => {
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
     return result
+}
+
+const expired = async (req, res, next) => {
+    
 }
 
 const countDistrbusi = async (req, res, next) => {

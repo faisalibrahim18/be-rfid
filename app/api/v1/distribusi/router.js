@@ -22,11 +22,11 @@ router.post('/distribusi', upload, create);
 
 router.get('/distribusi', index);
 
-router.get('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), find);
+router.get('/distribusi/:id',  find);
 
 router.put('/distribusi/:id', update);
 
-router.delete('/distribusi/:id', authenticateUser, authhorizeRoles('admin'), destroy);
+router.delete('/distribusi/:id',  destroy);
 
 router.get('/distribusiDownload', download);
 

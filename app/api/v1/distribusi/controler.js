@@ -26,8 +26,10 @@ const create = async (req, res, next) => {
         const result = await createDistribusi(req);
 
         res.status(StatusCodes.CREATED).json({
+            
             message: 'distribusi created successfully',
-            data: result
+            data: result,
+            
         });
     } catch (err) {
         next(err);
@@ -39,6 +41,7 @@ const index = async (req, res, next) => {
         const result = await getAllDistribusi(req)
 
         res.status(StatusCodes.OK).json({
+            total: result.length,
             data: result
         })
     } catch (err) {

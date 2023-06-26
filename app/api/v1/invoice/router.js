@@ -15,7 +15,7 @@ const {
     authhorizeRoles
 } = require('../../../middlewares/auth')
 
-router.post('/invoice', authenticateUser, authhorizeRoles('admin'), create);
+router.post('/invoice',  create);
 
 router.get('/invoice', index);
 
@@ -27,6 +27,6 @@ router.delete('/invoice/:id', destroy);
 
 router.get('/invoiceExport', exportPdf);
 
-router.get('/invoiceUser/:userId', authenticateUser, authhorizeRoles('admin'), findByUserId)
+router.get('/invoiceUser/:userId',  findByUserId)
 
 module.exports = router;

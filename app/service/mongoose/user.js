@@ -43,7 +43,16 @@ const createUser = async (req, res, next) => {
 
 const getAllUser = async (req) =>{
     const result = await User.find()
-    .select('_id name username role email number_phone')
+    .populate({
+        path: 'role',
+        populate: {
+            path: 'rolePrivileges.privilege_id',
+            populate: {
+                path: 'access_id',
+              }
+          }
+    })
+    .select('_id name username email number_phone')
 
 
     return result;
