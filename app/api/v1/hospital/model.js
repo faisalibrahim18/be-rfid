@@ -1,6 +1,20 @@
 const mongoose = require('mongoose');
 const { model, Schema } = mongoose;
 
+const linenSchema = Schema(
+    {
+        epc: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        category: {
+            type: String,
+            required: true,
+            unique: true
+        }
+    }
+)
 
 const hospitalSchema  = Schema(
     {
@@ -11,6 +25,9 @@ const hospitalSchema  = Schema(
         stock: {
             type: Number,
             default: 0
+        },
+        linen: {
+            type: [linenSchema]
         }
     },
     { timestamps: true}

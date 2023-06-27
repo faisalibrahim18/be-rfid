@@ -7,18 +7,18 @@ const {
     authhorizeRoles,
 } = require('../../../middlewares/auth');
 
-router.post('/user' ,create);
+router.post('/user', authenticateUser, create);
 
-router.get('/user',   index);
+router.get('/user',  authenticateUser, index);
 
-router.get('/userCount',  count);
+router.get('/userCount', authenticateUser, count);
 
-router.get('/user/:id', find);
+router.get('/user/:id', authenticateUser, find);
 
-router.put('/user/:id',  update);
+router.put('/user/:id', authenticateUser,  update);
 
-router.delete('/user/:id',  destroy);
+router.delete('/user/:id', authenticateUser, destroy);
 
-router.get('/getUserSignedIn',  getUserSign)
+router.get('/getUserSignedIn', authenticateUser,  getUserSign)
 
 module.exports = router;    

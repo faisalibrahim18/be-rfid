@@ -31,9 +31,7 @@ const createHospital = async (req, res, next) => {
 const getAllHospital = async (req, res, next) => {
 
     const result = await Hospital.find()
-        .select(
-            '_id name code number_phone address stock'
-        )
+       
     if (!result) throw new NotFoundError('Hospital Not Found');
 
     return result;

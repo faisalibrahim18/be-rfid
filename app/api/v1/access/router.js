@@ -4,9 +4,10 @@ const {
     find,
     create
 } = require('./controller');
+const { authenticateUser } = require('../../../middlewares/auth');
 
-router.get('/access', find);
+router.get('/access', authenticateUser, find);
 
-router.post('/access', create);
+router.post('/access', authenticateUser, create);
 
 module.exports = router;

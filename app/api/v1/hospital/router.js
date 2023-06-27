@@ -4,16 +4,16 @@ const { create, index, find, update, destroy, count } = require('./controller');
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 const upload = require('../../../middlewares/multer')
 
-router.post('/hospital',   create);
+router.post('/hospital',  authenticateUser,  create);
 
-router.get('/hospital',  index);
+router.get('/hospital', authenticateUser, index);
 
-router.get('/hospital/:id',   find);
+router.get('/hospital/:id', authenticateUser, find);
 
-router.put('/hospital/:id',    update);
+router.put('/hospital/:id', authenticateUser,    update);
 
-router.delete('/hospital/:id',  destroy);
+router.delete('/hospital/:id', authenticateUser,  destroy);
 
-router.get('/hospitalCount',  count)
+router.get('/hospitalCount', authenticateUser,  count)
 
 module.exports = router;

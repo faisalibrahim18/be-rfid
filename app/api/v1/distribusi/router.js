@@ -18,28 +18,28 @@ const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth
 const upload = require('../../../middlewares/multer');
 
 
-router.post('/distribusi', upload, create);
+router.post('/distribusi', authenticateUser, upload, create);
 
-router.get('/distribusi', index);
+router.get('/distribusi', authenticateUser, index);
 
-router.get('/distribusi/:id',  find);
+router.get('/distribusi/:id', authenticateUser,  find);
 
-router.put('/distribusi/:id', update);
+router.put('/distribusi/:id', authenticateUser, update);
 
-router.delete('/distribusi/:id',  destroy);
+router.delete('/distribusi/:id', authenticateUser,  destroy);
 
-router.get('/distribusiDownload', download);
+router.get('/distribusiDownload', authenticateUser, download);
 
-router.get('/distribusiDownloadPdf', downloadDistribusiPDF);
+router.get('/distribusiDownloadPdf', authenticateUser, downloadDistribusiPDF);
 
-router.post('/distribusi/upload', upload, importExcel);
+router.post('/distribusi/upload', authenticateUser, upload, importExcel);
 
 router.get('/distribusiCount', authenticateUser, count);
 
-router.get('/distribusiDownloadTemplate', downloadTemplateExcel);
+router.get('/distribusiDownloadTemplate', authenticateUser, downloadTemplateExcel);
 
-router.get('/serahTerima/:id', serahTerima)
+router.get('/serahTerima/:id', authenticateUser, serahTerima)
 
-router.get('/generatePDFSerahTerima/:id', generatePdf);
+router.get('/generatePDFSerahTerima/:id', authenticateUser, generatePdf);
 
 module.exports = router;

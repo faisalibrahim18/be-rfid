@@ -122,15 +122,7 @@ const importExcel = async (req, res, next) => {
             }
         }
 
-        if (hospital) {
-            await Hospital.findByIdAndUpdate(
-                { _id: hospital },
-                {
-                    $inc: { stock: count } 
-                },
-                { new: true, runValidators: true }
-            )
-        }
+       
         
 
         const transformedData = jsonData.map((item, index) => {
@@ -145,6 +137,17 @@ const importExcel = async (req, res, next) => {
             }
             return transformedItem
         })
+
+        if (hospital) {
+            await Hospital.findByIdAndUpdate(
+                { _id: hospital },
+                {
+                    $inc: { stock: count },
+                    linen: transformedData 
+                },
+                { new: true, runValidators: true }
+            )
+        }
 
         const result = await Linen.create(transformedData)
 

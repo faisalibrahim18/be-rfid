@@ -62,7 +62,16 @@ const getOneUsers = async (req) => {
     const { id } = req.params;
 
     const result = await User.findOne({ _id: id})
-    .select('_id name username role email number_phone')
+    .populate({
+        path: 'role',
+        populate: {
+            path: 'rolePrivileges.privilege_id',
+            populate: {
+                path: 'access_id',
+              }
+          }
+    })
+    .select('_id name username email number_phone')
 
     if (!result) throw new NotFoundError(`user not found for ${id}`)
 
@@ -117,7 +126,17 @@ const deleteUser = async (req) => {
 }
 
 const getUserLogin = async (req) => {
-    const result = await User.findOne({ _id: req.user.id });
+    const result = await User.findOne({ _id: req.user.id }) 
+    .populate({
+        path: 'role',
+        populate: {
+            path: 'rolePrivileges.privilege_id',
+            populate: {
+                path: 'access_id',
+              }
+          }
+    })
+    .select('_id name username email number_phone')
 
     if (!result) throw new NotFoundError('User not found');
 

@@ -11,7 +11,7 @@ const createDistribusi = async (req, res, next) => {
     const {
         customer,
         quality,
-        service,   
+        service,
         weight,
         note
     } = req.body;
@@ -22,8 +22,8 @@ const createDistribusi = async (req, res, next) => {
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-    const count = jsonData.length;    
-    
+    const count = jsonData.length;
+
 
     const transformedData = jsonData.map(async (item, index) => {
         const codeEpc = item.EPC;
@@ -37,25 +37,32 @@ const createDistribusi = async (req, res, next) => {
                 select: 'name'
             })
 
-         if (!Category) throw new BadRequestError('Linen ada yang belum terdaftar')
-            
+        if (!Category) throw new BadRequestError('Linen ada yang belum terdaftar')
+
         if (Category) {
             item.category = Category.category.name;
-        
+
             if (Category.hospital) {
-                console.log(customer)
                 if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen milik rumah sakit lain')
+                const checkEpc = await Hospital.findOne(
+                    { _id: Category.hospital._id },
+                )
+
+                const getEpc = checkEpc.linen.map(x => x.epc);
                 
+                if (!getEpc.includes(codeEpc)) throw new NotFoundError(`Linen ini bukan milik rumah sakit ${checkEpc.name}`);
+
                 await Hospital.findByIdAndUpdate(
                     { _id: Category.hospital._id },
                     {
-                        $inc: { stock: -1  } 
+                        $inc: { stock: -1 },
+                        $pull: { linen: { epc: codeEpc } }
                     },
                     { new: true, runValidators: true }
                 )
             }
-            
-        } 
+
+        }
         const transformedItem = {
             epc: item.EPC,
             category: Category ? Category.category.name : null
@@ -64,7 +71,7 @@ const createDistribusi = async (req, res, next) => {
     })
     const transformedformis = await Promise.all(transformedData);
 
-    
+
 
     const result = await Distribusi.create({
         customer,
@@ -84,13 +91,13 @@ const createDistribusi = async (req, res, next) => {
 const getAllDistribusi = async (req, res, next) => {
     const { startDate, endDate } = req.query;
     let condition = {};
-  
+
     if (startDate && endDate) {
-      condition.dateIn = { $gte: new Date(startDate), $lte: new Date(endDate) };
+        condition.dateIn = { $gte: new Date(startDate), $lte: new Date(endDate) };
     } else if (startDate) {
-      condition.dateIn = { $gte: new Date(startDate) };
+        condition.dateIn = { $gte: new Date(startDate) };
     } else if (endDate) {
-      condition.dateIn = { $lte: new Date(endDate) };
+        condition.dateIn = { $lte: new Date(endDate) };
     }
 
 
@@ -100,7 +107,7 @@ const getAllDistribusi = async (req, res, next) => {
             select: '_id name  number_phone  address'
 
         })
-      
+
         .populate({
             path: 'status',
             select: 'status checking transit accepted wash dry done'
@@ -163,7 +170,7 @@ const updateDistribusi = async (req, res, next) => {
     return result
 }
 
-const   deleteDistrbusi = async (req, res, next) => {
+const deleteDistrbusi = async (req, res, next) => {
     const { id } = req.params;
 
     const result = await Distribusi.findByIdAndDelete({ _id: id })
@@ -174,7 +181,7 @@ const   deleteDistrbusi = async (req, res, next) => {
 }
 
 const expired = async (req, res, next) => {
-    
+
 }
 
 const countDistrbusi = async (req, res, next) => {
@@ -183,4 +190,4 @@ const countDistrbusi = async (req, res, next) => {
     return result;
 }
 
-module.exports = { createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, countDistrbusi  };
+module.exports = { createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, countDistrbusi };

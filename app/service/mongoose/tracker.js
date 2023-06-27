@@ -415,19 +415,7 @@ const doneTracker = async (req) => {
 
         let counter = 0;
 
-        if (linen) {
-            item.category = linen.category.name;
-            if (linen.hospital) {
-                await Hospital.findByIdAndUpdate(
-                    { _id: linen.hospital._id },
-                    {
-                        $inc: { stock: 1  } 
-                    },
-                    { new: true, runValidators: true }
-                )
-            }
-            counter = await counterPlus(linen);
-        }
+        
 
         const transformedItem = {
             epc: item.EPC,
@@ -435,9 +423,35 @@ const doneTracker = async (req) => {
             counter: counter,
         };
 
+        if (linen) {
+            item.category = linen.category.name;
+            if (linen.hospital) {
+
+
+                const checkEpc = await Hospital.findOne(
+                    { _id: linen.hospital._id },
+                )
+
+                const getEpc = checkEpc.linen.map(x => x.epc);
+                
+                if (getEpc.includes(codeEpc)) throw new NotFoundError(`Linen sudah terdaftart di rumah sakit ${checkEpc.name}`);
+                
+                await Hospital.findByIdAndUpdate(
+                    { _id: linen.hospital._id },
+                    {
+                        $inc: { stock: 1  },
+                        $push: { linen: transformedItem } 
+                    },
+                    { new: true, runValidators: true }
+                )
+            }
+            counter = await counterPlus(linen);
+        }
+
         transformedData.push(transformedItem);
     }
 
+    console.log(transformedData)
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {

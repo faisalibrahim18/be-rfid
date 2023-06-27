@@ -4,17 +4,17 @@ const { create, index, find, update, destroy, count } = require('./controller');
 const { authenticateUser, authhorizeRoles } = require('../../../middlewares/auth');
 
 
-router.post('/inventory',   create );
+router.post('/inventory',  authenticateUser,  create );
 
-router.get('/inventory',  index);
+router.get('/inventory', authenticateUser, index);
 
-router.get('/inventoryCount',  count);
+router.get('/inventoryCount', authenticateUser, count);
 
-router.get('/inventory/:id',  find);
+router.get('/inventory/:id', authenticateUser, find);
 
-router.put('/inventory/:id',  update);
+router.put('/inventory/:id', authenticateUser, update);
 
-router.delete('/inventory/:id',  destroy);
+router.delete('/inventory/:id', authenticateUser, destroy);
 
 
 

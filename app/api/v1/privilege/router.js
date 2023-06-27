@@ -3,10 +3,11 @@ const router = express();
 const {
     index,
     create
-} = require('./controller')
+} = require('./controller');
+const { authenticateUser } = require('../../../middlewares/auth');
 
-router.get('/privilege', index);
+router.get('/privilege', authenticateUser, index);
 
-router.post('/privilege', create);
+router.post('/privilege', authenticateUser, create);
 
 module.exports = router;

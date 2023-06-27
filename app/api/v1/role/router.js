@@ -6,16 +6,17 @@ const {
     find,
     update,
     destroy
-} = require('./controller')
+} = require('./controller');
+const { authenticateUser } = require('../../../middlewares/auth');
 
-router.get('/role', index);
+router.get('/role', authenticateUser, index);
 
-router.post('/role', create);
+router.post('/role', authenticateUser, create);
 
-router.get('/role/:id', find)
+router.get('/role/:id', authenticateUser, find)
 
-router.put('/role/:id', update);
+router.put('/role/:id', authenticateUser, update);
 
-router.delete('/role/:id', destroy);
+router.delete('/role/:id', authenticateUser, destroy);
 
 module.exports = router;
