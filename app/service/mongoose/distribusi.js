@@ -13,7 +13,8 @@ const createDistribusi = async (req, res, next) => {
         quality,
         service,
         weight,
-        note
+        note,
+        status
     } = req.body;
 
 
@@ -122,9 +123,10 @@ const getAllDistribusi = async (req, res, next) => {
 const getOneDistribusi = async (req, res, next) => {
     const { id } = req.params;
 
-    const result = await Distribusi.findOne({ _id: id })
-        .select('customer category linen quality service status dateIn dateOut amount weight note')
-
+    const result = await Distribusi.findOne({ _id: id }).
+    populate({
+        path: 'customer'
+    })
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
     return result

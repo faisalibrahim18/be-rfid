@@ -38,7 +38,7 @@ router.get('/distribusiCount', authenticateUser, count);
 
 router.get('/distribusiDownloadTemplate', authenticateUser, downloadTemplateExcel);
 
-router.get('/serahTerima/:id', authenticateUser, serahTerima)
+router.get('/serahTerima/:id',  serahTerima)
 
 router.get('/generatePDFSerahTerima/:id', authenticateUser, generatePdf);
 

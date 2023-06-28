@@ -189,6 +189,7 @@
     }
 </style>
 
+
 <body>
     <div class="container-surat">
         <div class="head-surat">
@@ -214,17 +215,17 @@
         <div class="body-surat">
             <h1>Berita Acara Serah Terima Barang</h1>
             <div class="content-surat">
-                <p class="kami-class">Kami yang bertanda tangan dibawah ini, Pada hari ini kamis, 04 Juni 2020</p>
+                <p class="kami-class">Kami yang bertanda tangan dibawah ini, Pada hari ini <%= formatDate(data.dateIn.toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })) %></p>
                 <div class="data-surat">
                     <p class="title-surat">Nama</p>
-                    <p class="isi-surat">: cv. wira adikarya</p>
+                    <p class="isi-surat">: <%= data.customer.name %> </p>
                     <p class="title-surat alamat">Alamat</p>
-                    <p class="isi-surat">: yang tahu tahu aja</p>
+                    <p class="isi-surat">: <%= data.customer.address %></p>
                 </div>
                 <div class="data-surat-two">
                     <p>Selanjutnya disebut <span>pihak pertama</span></p>
                     <p class="title-surat">Nama</p>
-                    <p class="isi-surat">: cv. wira adikarya</p>
+                    <p class="isi-surat">: BKA Laundry</p>
                     <p class="title-surat alamat">Alamat</p>
                     <p class="isi-surat">: yang tahu tahu aja</p>
                     <p class="top">Selanjutnya disebut <span>pihak kedua</span></p>
@@ -239,16 +240,27 @@
                             <th>Nama Barang</th>
                             <th>Jumlah</th>
                         </thead>
-                            <% data.linen.forEach((item, index) => { %>
+                        <% let categories = {}; %>
+                        <% data.linen.forEach((item, index) => { %>
+                            <% if (!categories[item.category]) { %>
+                                <% categories[item.category] = 1; %>
+                            <% } else { %>
+                                <% categories[item.category]++; %>
+                            <% } %>
+                        <% }); %>
+                        <% let categoryCount = Object.keys(categories).length; %>
+                        <% let index = 1; %>
+                        <% for (let category in categories) { %>
                             <tbody>
-                                <td><%= index +1 %></td>
-                                <td>
-                                    <%= item.category %>
-                                </td>
-                                <td>9999 unit</td>
+                                <td><%= index %></td>
+                                <td><%= category %></td>
+                                <td><%= categories[category] %> unit</td>
                             </tbody>
-                            <% }); %>
+                            <% index++; %>
+                        <% } %>
                     </table>
+                    
+                    
                 </div>
                 <p class="top idk">Demikianlah surat serah terima barang ini di buat oleh kedua belah pihak, semenjak
                     penandatanganan surat ini, maka barang tersebut menjadi tanggung jawab <span>pihak kedua</span>,
@@ -273,6 +285,17 @@
             </div>
         </div>
     </div>
+    <% function formatDate(dateString) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const date = new Date(dateStri
+        );
+        return date.toLocaleDateString('id-ID', options);
+    } %>
 </body>
 
+
+    
+
 </html>
+
+
