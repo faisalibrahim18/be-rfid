@@ -38,7 +38,8 @@ const index = async (req, res, next) => {
         const result = await getAllLinen();
 
         res.status(StatusCodes.OK).json({
-            data: result
+            data: result,
+            total: result.length
         })
     } catch (err) {
         next(err);
@@ -121,9 +122,6 @@ const importExcel = async (req, res, next) => {
                 return res.status(StatusCodes.BAD_REQUEST).send({ message: 'Duplicate EPC' });
             }
         }
-
-       
-        
 
         const transformedData = jsonData.map((item, index) => {
             const codeNumber = index + 1;

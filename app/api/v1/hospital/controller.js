@@ -19,6 +19,7 @@ const index = async (req, res, next) => {
         const result = await getAllHospital();
 
         res.status(StatusCodes.OK).json({
+            total: result.length,
             data: result
         })
     } catch (err) {

@@ -22,7 +22,8 @@ const index = async (req, res, next) => {
         const result = await getAllUser();
 
         res.status(StatusCodes.OK).json({
-            data: result
+            total: result.length,
+            data: result,
         })
     }catch (err) {
         next(err);

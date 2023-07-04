@@ -19,6 +19,7 @@ const index = async (req, res, next) => {
         const result = await getAllInventory()
         
         res.status(StatusCodes.OK).json({
+            total: result.length,
             data: result
         })
     } catch (err) {
@@ -66,7 +67,6 @@ const destroy = async (req, res, next) => {
 
 const count = async (req, res, next) => {
     try {
-
         const result = await countInventory();
 
         res.json({

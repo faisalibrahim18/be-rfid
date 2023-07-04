@@ -6,12 +6,10 @@ const linenSchema = Schema(
         epc: {
             type: String,
             required: true,
-            unique: true
         },
         category: {
             type: String,
-            required: true,
-            unique: true
+            required: true,    
         }
     }
 )

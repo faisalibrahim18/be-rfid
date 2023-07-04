@@ -320,6 +320,7 @@ const serahTerima = async (req, res, next) => {
             return res.send(html)
         })
 
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Failed to generate or send PDF');
@@ -330,7 +331,7 @@ const serahTerima = async (req, res, next) => {
 const generatePdf = async (req, res, next) => {
     try {
         const { id } = req.params
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({ headless: 'new' });
         const page = await browser.newPage();
 
         await page.goto(`http://localhost:9000/api/v1/rfid/serahTerima/${id}`,

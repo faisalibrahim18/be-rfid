@@ -40,6 +40,6 @@ router.get('/distribusiDownloadTemplate', authenticateUser, downloadTemplateExce
 
 router.get('/serahTerima/:id',  serahTerima)
 
-router.get('/generatePDFSerahTerima/:id', authenticateUser, generatePdf);
+router.get('/generatePDFSerahTerima/:id',  generatePdf);
 
 module.exports = router;
