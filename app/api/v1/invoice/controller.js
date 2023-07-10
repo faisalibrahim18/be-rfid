@@ -36,7 +36,10 @@ const index = async (req, res, next) => {
         //     data: result
         // })
 
-        res.render('invoice', { invoice })
+        res.status(StatusCodes.OK).json({
+            data: invoice
+        })
+        // res.render('invoice', { invoice })
     } catch(err) {
         next(err)
     }

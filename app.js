@@ -21,6 +21,7 @@ const invoisRouter = require('./app/api/v1/invoice/router');
 const accessRouter = require('./app/api/v1/access/router');
 const privilegeRouter = require('./app/api/v1/privilege/router');
 const roleRouter = require('./app/api/v1/role/router');
+const priceRouter = require('./app/api/v1/price/router');
 
 const v1 = '/api/v1/rfid';
 
@@ -31,7 +32,7 @@ app.set('view engine', 'ejs');
 app.use(
     cors({
         credentials: true,
-        origin: "http://127.0.0.1:5173",
+        origin: "http://localhost:5173",
     }),
 );
 app.use(logger('dev'));
@@ -61,6 +62,7 @@ app.use(v1, invoisRouter);
 app.use(v1, accessRouter);
 app.use(v1, privilegeRouter);
 app.use(v1, roleRouter);
+app.use(v1, priceRouter)
 
 
 app.use(notFoundMiddleware);

@@ -52,6 +52,9 @@ const getAllUser = async (req) =>{
               }
           }
     })
+    .select('_id name role username email number_phone')
+
+
     return result;
 }
 
@@ -68,6 +71,7 @@ const getOneUsers = async (req) => {
               }
           }
     })
+    .select('_id name role username email number_phone')
 
     if (!result) throw new NotFoundError(`user not found for ${id}`)
 
@@ -132,6 +136,8 @@ const getUserLogin = async (req) => {
               }
           }
     })
+    .select('_id name role username email number_phone')
+
     if (!result) throw new NotFoundError('User not found');
 
     return result;

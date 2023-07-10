@@ -6,7 +6,7 @@ const invoisSchema = Schema(
         userId: {
             type: mongoose.Types.ObjectId,
             ref : 'User',
-            required: [true, 'id user not found']
+            required: true,
         },  
         transactionNumber:{
             type: String,

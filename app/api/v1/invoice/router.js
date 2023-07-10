@@ -17,7 +17,7 @@ const {
 
 router.post('/invoice', authenticateUser, create);
 
-router.get('/invoice', authenticateUser, index);
+router.get('/invoice', index);
 
 router.get('/invoice/:id',  authenticateUser, find);
 

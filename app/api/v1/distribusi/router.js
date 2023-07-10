@@ -28,15 +28,15 @@ router.put('/distribusi/:id', authenticateUser, update);
 
 router.delete('/distribusi/:id', authenticateUser,  destroy);
 
-router.get('/distribusiDownload', authenticateUser, download);
+router.get('/distribusiDownload',  download);
 
-router.get('/distribusiDownloadPdf', authenticateUser, downloadDistribusiPDF);
+router.get('/distribusiDownloadPdf',  downloadDistribusiPDF);
 
-router.post('/distribusi/upload', authenticateUser, upload, importExcel);
+router.post('/distribusi/upload',  upload, importExcel);
 
 router.get('/distribusiCount', authenticateUser, count);
 
-router.get('/distribusiDownloadTemplate', authenticateUser, downloadTemplateExcel);
+router.get('/distribusiDownloadTemplate',  downloadTemplateExcel);
 
 router.get('/serahTerima/:id',  serahTerima)
 

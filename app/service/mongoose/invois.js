@@ -1,13 +1,28 @@
 const Invoice = require('../../api/v1/invoice/model');
+const Price = require('../../api/v1/price/model');
+
 
 const { NotFoundError, BadRequestError } = require('../../errors');
+
+const HargaPerKG = async (req, res, next) => {
+
+    const harga = await Price.findOne({
+        name: 'Harga Cuci Per KG'
+    })
+
+    if (harga) {
+      return harga.value;
+    }
+
+
+}
 
 const createInvoice = async (req) => {
     const {  weight, } = req.body;
     const userId  = req.user.id;
 
     const transactionNumber = await generateUniqueTransactionNumber(17);
-    const price = weight * 5000;
+    const price = weight * await HargaPerKG();
 
     const result = await Invoice.create({
         userId: userId,
