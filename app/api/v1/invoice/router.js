@@ -6,8 +6,9 @@ const {
     find,
     update,
     destroy,
-    exportPdf,
-    findByUserId
+    findByUserId,
+    invoicePage,
+    generatePdf
 } = require('./controller')
 
 const {
@@ -25,8 +26,10 @@ router.put('/invoice/:id', authenticateUser, update);
 
 router.delete('/invoice/:id', authenticateUser, destroy);
 
-router.get('/invoiceExport', authenticateUser, exportPdf);
+router.get('/invoiceExport/:id',  generatePdf);
 
-router.get('/invoiceUser/:userId', authenticateUser, findByUserId)
+router.get('/invoiceUser/:userId', authenticateUser, findByUserId);
+
+router.get('/invoiceView/:id', invoicePage)
 
 module.exports = router;

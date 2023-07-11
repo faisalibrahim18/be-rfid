@@ -18,28 +18,22 @@ const HargaPerKG = async (req, res, next) => {
 }
 
 const createInvoice = async (req) => {
-    const {  weight, } = req.body;
-    const userId  = req.user.id;
+    const { weight } = req; 
 
     const transactionNumber = await generateUniqueTransactionNumber(17);
     const price = weight * await HargaPerKG();
 
-    const result = await Invoice.create({
-        userId: userId,
-        weight: weight,
-        transactionNumber: transactionNumber,
-        price: price
-    });
+    const result = {
+         transactionNumber,
+         price
+    }
 
     return result;
 }
 
 const getAllInvoice = async () => {
     const result = await Invoice.find()
-    .populate({
-        path: 'userId',
-        select: 'name number_phone addres'
-    })
+ 
 
     return result
 }
@@ -48,6 +42,9 @@ const getOneInvoice = async (req) => {
     const { id } = req.params;
     const result = await Invoice.findOne({
         _id: id
+    })
+    .populate({
+        path: 'hospital'
     })
 
     if (!result) throw new NotFoundError(`not found id : ${id}`)
@@ -126,6 +123,8 @@ async function generateUniqueTransactionNumber(length) {
 
 
 
+
+
 module.exports = {
     createInvoice,
     getAllInvoice,
@@ -133,4 +132,7 @@ module.exports = {
     updateInvoice,
     deleteInvoice,
     getInvoiceByUserId,
+    generateUniqueTransactionNumber,
+    HargaPerKG,
+    
 }

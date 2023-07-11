@@ -3,8 +3,8 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const Linen = require('../../api/v1/linen/model')
 const xlsx = require('xlsx');
 const Hospital = require('../../api/v1/hospital/model');
-
-
+const Invoice = require('../../api/v1/invoice/model');
+const { createInvoice, generateUniqueTransactionNumber, HargaPerKG } = require('./invois')
 
 
 const createDistribusi = async (req, res, next) => {
@@ -14,8 +14,10 @@ const createDistribusi = async (req, res, next) => {
         service,
         weight,
         note,
-        status
+        
     } = req.body;
+
+
 
 
     const workbook = xlsx.readFile(req.file.path);
@@ -44,14 +46,14 @@ const createDistribusi = async (req, res, next) => {
             item.category = Category.category.name;
 
             if (Category.hospital) {
-                if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen milik rumah sakit lain')
+                // if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen milik rumah sakit lain')
                 const checkEpc = await Hospital.findOne(
                     { _id: Category.hospital._id },
                 )
 
                 const getEpc = checkEpc.linen.map(x => x.epc);
                 
-                if (!getEpc.includes(codeEpc)) throw new NotFoundError(`Linen ini bukan milik rumah sakit ${checkEpc.name}`);
+                // if (!getEpc.includes(codeEpc)) throw new NotFoundError(`Linen ini bukan milik rumah sakit ${checkEpc.name}`);
 
                 await Hospital.findByIdAndUpdate(
                     { _id: Category.hospital._id },
@@ -72,7 +74,25 @@ const createDistribusi = async (req, res, next) => {
     })
     const transformedformis = await Promise.all(transformedData);
 
+    // console.log('generate',await generateUniqueTransactionNumber(17))
+    // console.log('Harga per kg', await HargaPerKG())
 
+
+    // // Create Transaction / Invoice
+    // const noTransaction = await generateUniqueTransactionNumber(17)
+    // const Harga = await HargaPerKG()
+
+    // const price = weight * Harga;
+
+    // const invoice = await Invoice.create({
+    //     transactionNumber: noTransaction,
+    //     price: price,
+    //     weight: weight,
+    //     hospital: customer
+    // })
+    
+
+    // console.log('invoice._id ===============>', invoice._id)
 
     const result = await Distribusi.create({
         customer,
@@ -83,8 +103,10 @@ const createDistribusi = async (req, res, next) => {
         amount: count,
         weight,
         note,
-        status: null
+        status: null,
     });
+
+    
 
     return result;
 }
@@ -100,7 +122,6 @@ const getAllDistribusi = async (req, res, next) => {
     } else if (endDate) {
         condition.dateIn = { $lte: new Date(endDate) };
     }
-
 
     const result = await Distribusi.find(condition)
         .populate({
@@ -149,6 +170,24 @@ const updateDistribusi = async (req, res, next) => {
     } = req.body;
 
 
+    const distribusi = await Distribusi.findOne({ _id: id });
+
+    const berat = distribusi.weight;
+    const hospital = distribusi.customer;
+
+     // Create Transaction / Invoice
+     const noTransaction = await generateUniqueTransactionNumber(17)
+     const Harga = await HargaPerKG()
+ 
+     const price = berat * Harga;
+ 
+     const invoice = await Invoice.create({
+         transactionNumber: noTransaction,
+         price: price,
+         weight: weight,
+         hospital: hospital
+     })
+
     const result = await Distribusi.findByIdAndUpdate(
         { _id: id },
         {
@@ -162,7 +201,8 @@ const updateDistribusi = async (req, res, next) => {
             dateOut,
             amount,
             weight,
-            note
+            note,
+            invoice_id: invoice._id
         },
         { new: true, runValidators: true }
     );

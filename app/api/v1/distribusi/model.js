@@ -14,6 +14,11 @@ const linenSchema = Schema(
 )
 const distribusiSchema = Schema(
     {
+
+        invoice_id:{
+            type: mongoose.Types.ObjectId,
+            ref: 'Invoice'
+        },
         customer: { 
             type: mongoose.Types.ObjectId,
             ref: 'Hospital',

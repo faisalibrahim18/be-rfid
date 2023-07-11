@@ -81,18 +81,16 @@
       <h1>BKA Laundry</h1>
     </div>
     <div class="underline"></div>
-    <% invoice.forEach((item) => { %>
     <div class="details">
-      <p><span class="name">Nama :</span>  <%= item.userId.name %></p>
-      <p><span class="date">Purchase Date :</span>  <%= item.date.toLocaleDateString() %></p>
-      <p><span class="weight">Weight :</span> <%= item.weight %> KG</p>
-      <p><span class="transaksi">No. Transaksi :</span> <%= item.transactionNumber %></p>
-      <p><span class="price">Price :</span> <%= item.price %></p>
+      <p><span class="name">Rumah Sakit :</span>  <%= invoice.hospital.name %></p>
+      <p><span class="date">Purchase Date :</span>  <%= invoice.date.toLocaleDateString() %></p>
+      <p><span class="weight">Weight :</span> <%= invoice.weight %> KG</p>
+      <p><span class="transaksi">No. Transaksi :</span> <%= invoice.transactionNumber %></p>
+      <p><span class="price">Price :</span> <%= invoice.price %></p>
     </div>
     <div class="total">
-      Total: <%= item.price %>
+      Total: <%= invoice.price %>
     </div>
-    <% }); %>
   </div>
 </body>
 </html>

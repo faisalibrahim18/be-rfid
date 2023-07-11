@@ -4,7 +4,8 @@ const {
     getOneInvoice,
     updateInvoice,
     deleteInvoice,
-    getInvoiceByUserId
+    getInvoiceByUserId,
+    
 } = require('../../../service/mongoose/invois');
 
 const { StatusCodes } = require('http-status-codes');
@@ -12,6 +13,7 @@ const ejs = require('ejs');
 const pdf = require('html-pdf');
 const fs = require('fs');
 const path = require('path');
+const puppeteer = require('puppeteer');
 
 
 
@@ -82,38 +84,7 @@ const destroy = async (req, res, next) => {
         next(err)
     } 
 }
-const exportPdf = async (req, res, next) => {
-    try {
-        const invoice = await getAllInvoice()
 
-        const data = {
-            invoice: invoice
-        };
-        const filePathName = path.resolve(__dirname, '../../../../views/invoice.ejs');
-        const htmlString = fs.readFileSync(filePathName).toString();
-        const ejsData = ejs.render(htmlString, data);
-
-        const options = {
-            format: 'Letter'
-        };
-
-        
-         pdf.create(ejsData, options).toBuffer(async (err, buffer) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send('Failed to generate PDF');
-            }
-
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment;filename="invoice.pdf"');
-
-            res.send(buffer);
-        });
-    } catch (err) {
-        console.log(err.message);
-        return res.status(500).send('Failed to generate PDF');
-    }
-};
 
 const findByUserId = async (req, res, next) => {
     try {
@@ -126,7 +97,71 @@ const findByUserId = async (req, res, next) => {
     } catch (err) {
         next(err)
     }
+    
 }
+
+const invoicePage = async (req, res, next) => {
+    try {
+        const invoice = await getOneInvoice(req);
+        const filePath = path.join(__dirname, "../../../../views/invoice.ejs")
+        ejs.renderFile(filePath, { invoice }, (err, html) => {
+            if (err) {
+                console.log(err)
+            }
+            return res.send(html)
+        })
+
+
+    } catch (error) {
+        next(err)
+    }
+};
+
+const generatePdf = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const browser = await puppeteer.launch({ headless: 'new' });
+        const page = await browser.newPage();
+        
+        const ENV = process.env.API_LOCAL || process.env.API_DEVELOPMENT 
+
+        await page.goto(`${ENV}/invoiceView/${id}`,
+            {
+                waitUntil: 'networkidle0'
+            });
+
+
+        const pdf = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+        });
+
+        await browser.close();
+
+        const filePath = path.join(__dirname, 'invoice.pdf');
+        fs.writeFileSync(filePath, pdf);
+
+       
+
+        res.download(filePath, 'invoice.pdf', (err) => {
+            if (err) {
+                console.error(err);
+                return next(err);
+            }
+
+            fs.unlinkSync(filePath);
+        });
+
+
+
+    } catch (err) {
+        next(err)
+    }
+}
+
+
+
+
 
 module.exports = {
     create,
@@ -134,6 +169,7 @@ module.exports = {
     find,
     update,
     destroy,
-    exportPdf,
-    findByUserId
+    generatePdf,
+    findByUserId,
+    invoicePage
 }

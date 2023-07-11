@@ -3,11 +3,6 @@ const { model, Schema } = mongoose;
 
 const invoisSchema = Schema(
     {
-        userId: {
-            type: mongoose.Types.ObjectId,
-            ref : 'User',
-            required: true,
-        },  
         transactionNumber:{
             type: String,
         },
@@ -21,6 +16,10 @@ const invoisSchema = Schema(
         },
         price: {
             type: Number,         
+        },
+        hospital: {
+            type: mongoose.Types.ObjectId,
+            ref: 'Hospital'
         }
     }
 )
