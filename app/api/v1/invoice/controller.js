@@ -5,7 +5,6 @@ const {
     updateInvoice,
     deleteInvoice,
     getInvoiceByUserId,
-    
 } = require('../../../service/mongoose/invois');
 
 const { StatusCodes } = require('http-status-codes');

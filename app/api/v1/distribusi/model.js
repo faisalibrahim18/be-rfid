@@ -17,7 +17,7 @@ const distribusiSchema = Schema(
 
         invoice_id:{
             type: mongoose.Types.ObjectId,
-            ref: 'Invoice'
+            ref: 'Invois'
         },
         customer: { 
             type: mongoose.Types.ObjectId,

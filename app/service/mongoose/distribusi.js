@@ -104,6 +104,7 @@ const createDistribusi = async (req, res, next) => {
         weight,
         note,
         status: null,
+        invoice_id: null
     });
 
     
@@ -133,6 +134,9 @@ const getAllDistribusi = async (req, res, next) => {
         .populate({
             path: 'status',
             select: 'status checking transit accepted wash dry done'
+        })
+        .populate({
+            path: 'invoice_id'
         })
         .select('customer category linen quality service status dateIn dateOut amount weight note')
 

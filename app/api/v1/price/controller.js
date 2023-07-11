@@ -2,7 +2,8 @@ const {
     findOnePrice,
     getAllPrice,
     createPrice,
-    updatePrice
+    updatePrice,
+    deletePrice
 } = require('../../../service/mongoose/price');
 
 const { StatusCodes } = require('http-status-codes');
@@ -47,7 +48,6 @@ const find = async (req, res, next) => {
 
 const update = async (req, res, next) => {
     try {
-        const { id } = req.params;
 
         const result = await updatePrice(req)
 
@@ -59,9 +59,21 @@ const update = async (req, res, next) => {
     }
 }
 
+const destroy = async (req, res, next) => {
+    try {
+        const result = await deletePrice(req)
+
+        res.status(StatusCodes.OK).json({
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
 module.exports = {
     create,
     index,
     find,
-    update
+    update,
+    destroy
 }

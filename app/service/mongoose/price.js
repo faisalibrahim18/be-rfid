@@ -1,4 +1,5 @@
 const Price = require('../../api/v1/price/model');
+const { NotFoundError, BadRequestError } = require('../../errors')
 
 
 const getAllPrice = async (req, res, next) => {
@@ -43,9 +44,23 @@ const updatePrice = async (req, res, next) => {
 }
 
 
+const deletePrice = async (req, res, next) => {
+    const { id } = req.params;
+    
+    const price = await Price.findOne({ _id: id });
+
+    if (price.name === 'Harga Cuci Per KG'){
+        throw new BadRequestError('tidak bisa di hapus')
+    }
+
+    price.destroy()
+}
+
+
 module.exports = {
     getAllPrice,
     createPrice,
     findOnePrice,
-    updatePrice
+    updatePrice,
+    deletePrice,
 }
