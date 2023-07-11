@@ -33,8 +33,9 @@ const createInvoice = async (req) => {
 
 const getAllInvoice = async () => {
     const result = await Invoice.find()
- 
-
+    .populate({
+        path: 'hospital'
+    })
     return result
 }
 
