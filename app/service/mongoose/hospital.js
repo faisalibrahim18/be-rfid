@@ -1,6 +1,6 @@
 const Hospital = require('../../api/v1/hospital/model');
 const { NotFoundError, BadRequestError } = require('../../errors');
-
+const Audit = require('../../api/v1/audit trail/model');
 
 const createHospital = async (req, res, next) => {
     const {
@@ -24,6 +24,12 @@ const createHospital = async (req, res, next) => {
         number_phone,
         address,
     });
+
+    await Audit.create({
+        task: `Hospital created ${result.name}`,
+        status: 'CREATE',
+        user: req.user.id
+    })
 
     return result
 }
@@ -80,6 +86,12 @@ const updateHospital = async (req, res, next) => {
     );
     if (!result) throw new NotFoundError('Hospital not found');
 
+    await Audit.create({
+        task: `Hospital updated ${result.name}`,
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result;
 }
 
@@ -89,6 +101,12 @@ const deleteHospital = async (req) => {
     const result = await Hospital.findByIdAndDelete(id);
 
     if (!result) throw new NotFoundError('Hospital not found');
+
+    await Audit.create({
+        task: `Hospital deleted ${result.name}`,
+        status: 'DELETE',
+        user: req.user.id
+    })
 
     return result;
 }

@@ -28,7 +28,9 @@ const roleSchema = Schema(
     rolePrivileges:{
       type: [rolePrivilage]
     },
-  }
+    Users: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  },
+  { timestamps: true }
 )
 
 module.exports = model('Role', roleSchema);

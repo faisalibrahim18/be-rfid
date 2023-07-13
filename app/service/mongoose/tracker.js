@@ -3,6 +3,7 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const xlsx = require('xlsx');
 const Linen = require('../../api/v1/linen/model');
 const Hospital = require('../../api/v1/hospital/model');
+const Audit = require('../../api/v1/audit trail/model');
 
 const ExcelJS = require('exceljs');
 const path = require('path')
@@ -96,6 +97,13 @@ const chekingTracker = async (req) => {
     )
     if (!result) throw new NotFoundError('Tracker not found')
 
+    
+    await Audit.create({
+        task: 'Tacker status Check',
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result;
 }
 
@@ -138,6 +146,12 @@ const transitTracker = async (req) => {
         { new: true, runValidators: true }
     )
     if (!result) throw new NotFoundError('Tracker not found')
+
+    await Audit.create({
+        task: 'Tacker status Tansit',
+        status: 'UPDATE',
+        user: req.user.id
+    })
 
     return result;
 }
@@ -207,6 +221,12 @@ const acceptedTracker = async (req) => {
 
     if (!result) throw new NotFoundError('Tracker not found')
 
+    await Audit.create({
+        task: 'Tacker status Acc',
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result;
 }
 
@@ -274,6 +294,12 @@ const washTracker = async (req) => {
     )
 
     if (!result) throw new NotFoundError('Tracker not found')
+
+    await Audit.create({
+        task: 'Tacker status Wash',
+        status: 'UPDATE',
+        user: req.user.id
+    })
 
     return result;
 }
@@ -345,6 +371,12 @@ const dryTracker = async (req) => {
 
     if (!result) throw new NotFoundError('Tracker not found')
 
+    await Audit.create({
+        task: 'Tacker status Dry',
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result;
 }
 
@@ -387,6 +419,12 @@ const deliveryToHospital = async (req) => {
         { new: true, runValidators: true }
     )
     if (!result) throw new NotFoundError('Tracker not found')
+
+    await Audit.create({
+        task: 'Tacker status transit to hospital',
+        status: 'UPDATE',
+        user: req.user.id
+    })
 
     return result;
 }
@@ -470,6 +508,12 @@ const doneTracker = async (req) => {
     );
 
     if (!result) throw new NotFoundError('Tracker not found');
+
+    await Audit.create({
+        task: 'Tacker status Success',
+        status: 'UPDATE',
+        user: req.user.id
+    })
 
     return result;
 };

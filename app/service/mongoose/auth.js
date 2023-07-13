@@ -6,7 +6,7 @@ const { jwtSecret, jwtExpiration } = require('../../config');
 
 const signin = async (req, res, next) => {
     const { username, password } = req.body;
-    
+
 
     if (!username || !password) {
         throw new BadRequestError('Please provide username and password')
@@ -22,21 +22,26 @@ const signin = async (req, res, next) => {
 
     if (!isPasswordCorrect) {
         throw new UnauthenticatedError('Invalid credentials')
+
     }
 
-    const token = createJWT({ payload: createTokenUser(result)});
+    result.is_login = true,
+        await result.save()
 
-    return token ;
+    const token = createJWT({ payload: createTokenUser(result) });
+
+    return token;
 }
 
 const logout = async (req, res, next) => {
+    
+        const { id } = req.user;
 
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) throw new UnauthenticatedError('Unauthorized')
+        const user = await Users.findOne({ _id: id });
 
-    const decoded = jwt.verify(token, jwtSecret);
+        user.is_login = false;
+        await user.save()
 
-    return decoded
+        return user;
 }
 module.exports = { signin, logout }

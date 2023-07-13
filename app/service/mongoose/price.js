@@ -24,7 +24,7 @@ const createPrice = async (req, res, next) => {
 const findOnePrice = async (req, res, next) => {
     const { id } = req.params;
 
-    const price = await Price.findOne({ id })
+    const price = await Price.findOne({ _id:id })
 
     return price
 }

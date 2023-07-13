@@ -22,6 +22,7 @@ const accessRouter = require('./app/api/v1/access/router');
 const privilegeRouter = require('./app/api/v1/privilege/router');
 const roleRouter = require('./app/api/v1/role/router');
 const priceRouter = require('./app/api/v1/price/router');
+const auditRouter = require('./app/api/v1/audit trail/router');
 
 const v1 = '/api/v1/rfid';
 
@@ -63,6 +64,7 @@ app.use(v1, accessRouter);
 app.use(v1, privilegeRouter);
 app.use(v1, roleRouter);
 app.use(v1, priceRouter)
+app.use(v1, auditRouter)
 
 
 app.use(notFoundMiddleware);

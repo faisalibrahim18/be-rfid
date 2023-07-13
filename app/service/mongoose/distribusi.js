@@ -4,6 +4,7 @@ const Linen = require('../../api/v1/linen/model')
 const xlsx = require('xlsx');
 const Hospital = require('../../api/v1/hospital/model');
 const Invoice = require('../../api/v1/invoice/model');
+const Audit = require('../../api/v1/audit trail/model');
 const { createInvoice, generateUniqueTransactionNumber, HargaPerKG } = require('./invois')
 
 
@@ -16,7 +17,7 @@ const createDistribusi = async (req, res, next) => {
         note,
         
     } = req.body;
-
+    
 
 
 
@@ -74,25 +75,9 @@ const createDistribusi = async (req, res, next) => {
     })
     const transformedformis = await Promise.all(transformedData);
 
-    // console.log('generate',await generateUniqueTransactionNumber(17))
-    // console.log('Harga per kg', await HargaPerKG())
+    // audit log
 
-
-    // // Create Transaction / Invoice
-    // const noTransaction = await generateUniqueTransactionNumber(17)
-    // const Harga = await HargaPerKG()
-
-    // const price = weight * Harga;
-
-    // const invoice = await Invoice.create({
-    //     transactionNumber: noTransaction,
-    //     price: price,
-    //     weight: weight,
-    //     hospital: customer
-    // })
-    
-
-    // console.log('invoice._id ===============>', invoice._id)
+  
 
     const result = await Distribusi.create({
         customer,
@@ -108,6 +93,11 @@ const createDistribusi = async (req, res, next) => {
     });
 
     
+    await Audit.create({
+        task: `Distribusi created ${result._id}`,
+        status: 'CREATE',
+        user: req.user.id
+    })
 
     return result;
 }
@@ -188,9 +178,11 @@ const updateDistribusi = async (req, res, next) => {
      const invoice = await Invoice.create({
          transactionNumber: noTransaction,
          price: price,
-         weight: weight,
+         weight: berat,
          hospital: hospital
      })
+
+    
 
     const result = await Distribusi.findByIdAndUpdate(
         { _id: id },
@@ -213,6 +205,12 @@ const updateDistribusi = async (req, res, next) => {
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
+    await Audit.create({
+        task: `Distribusi updated ${result._id}`,
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result
 }
 
@@ -223,12 +221,16 @@ const deleteDistrbusi = async (req, res, next) => {
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
+    await Audit.create({
+        task: `Distribusi deleted ${result._id}`,
+        status: 'UPDATE',
+        user: req.user.id
+    })  
+
     return result
 }
 
-const expired = async (req, res, next) => {
 
-}
 
 const countDistrbusi = async (req, res, next) => {
     const result = await Distribusi.find().count()

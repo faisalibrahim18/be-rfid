@@ -21,6 +21,9 @@ const invoisSchema = Schema(
             type: mongoose.Types.ObjectId,
             ref: 'Hospital'
         }
+    },
+    { 
+        timestamp: true
     }
 )
 

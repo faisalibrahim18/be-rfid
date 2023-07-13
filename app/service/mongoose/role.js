@@ -1,4 +1,6 @@
 const Role = require('../../api/v1/role/model');
+const User = require('../../api/v1/users/model');
+
 const { BadRequestError, NotFoundError } = require('../../errors')
 
 const createRole = async (req) => {
@@ -91,15 +93,23 @@ const updateRole = async (req) => {
 
 const deleteRole = async (req) => {
   const { id } = req.params;
-  
-  const result = await Role.findByIdAndDelete({
-    _id: id,
-  })
 
-  if (!result) throw new BadRequestError(` Role With id ${id} not found`);
+  const role = await Role.findById(id).populate('Users');
 
-  return result
-}
+  if (!role) throw new NotFoundError(`Role with id ${id} not found`);
+
+  // Mengubah role_id menjadi null untuk setiap user yang terkait dengan peran ini
+  for (const item of role.Users) {
+    await User.findByIdAndUpdate(item._id, { role_id: null });
+  }
+
+  // Menghapus peran
+  const result = await Role.findByIdAndDelete(id);
+
+  if (!result) throw new BadRequestError(`Role with id ${id} not found`);
+
+  return result;
+};
 
 module.exports = {
   createRole,

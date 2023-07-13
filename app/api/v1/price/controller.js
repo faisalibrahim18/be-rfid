@@ -34,7 +34,6 @@ const index = async (req, res, next) => {
 
 const find = async (req, res, next) => {
     try {
-        const id = req.params.id
         const result = await findOnePrice(req)
 
         res.status(StatusCodes.OK).json({

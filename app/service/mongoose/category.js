@@ -1,5 +1,6 @@
 const Category = require('../../api/v1/category/model');
 const { NotFoundError, BadRequestError } = require('../../errors');
+const Audit = require('../../api/v1/audit trail/model');
 
 const createCategory = async (req) => {
     const { name, unit, expired  } = req.body;
@@ -11,6 +12,12 @@ const createCategory = async (req) => {
         name: name,
         expired: expired,
         unit: unit
+    })
+
+    await Audit.create({
+        task: `Category created ${result.name}`,
+        status: 'CREATE',
+        user: req.user.id
     })
 
     return result;
@@ -61,6 +68,12 @@ const updateCategory = async (req) => {
 
     if (!result) throw new NotFoundError(`Category dengan ${id} tidak ditemukan`);
 
+    await Audit.create({
+        task: `Category updated ${result.name}`,
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result;
 }
 
@@ -70,6 +83,12 @@ const deleteCategory = async (req) => {
     const result = await Category.findByIdAndDelete(id);
 
     if (!result) throw new NotFoundError('Category not found');
+
+    await Audit.create({
+        task: `Category deleted ${result.name}`,
+        status: 'DELETE',
+        user: req.user.id
+    })
 
     return result;
 }

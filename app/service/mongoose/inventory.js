@@ -1,5 +1,6 @@
 const Inventory = require('../../api/v1/inventory/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
+const Audit = require('../../api/v1/audit trail/model');
 
 const createInventory = async (req, res) => {
     const { kode, name, amount, status } = req.body;
@@ -11,7 +12,11 @@ const createInventory = async (req, res) => {
     const result = await Inventory.create({
         kode, name, amount, status
     })
-
+    await Audit.create({
+        task: `Inventory created ${result.name}`,
+        status: 'CREATE',
+        user: req.user.id
+    })
     return result
 }
 
@@ -58,6 +63,11 @@ const updateInventory = async (req, res) => {
     )
     if (!result) throw new NotFoundError(`No such inventory found for ${id}`);
 
+    await Audit.create({
+        task: `Inventory updated ${result.name}`,
+        status: 'UPDATE',
+        user: req.user.id
+    })
     return result
 }
 
@@ -69,6 +79,12 @@ const deleteInventory = async (req, res) => {
     });
 
     if (!result) throw new NotFoundError(`No such inventory found for ${id}`);
+
+    await Audit.create({
+        task: `Inventory deleted ${result.name}`,
+        status: 'DELETE',
+        user: req.user.id
+    })
 
     return result;
 }

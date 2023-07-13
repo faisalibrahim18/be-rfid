@@ -10,7 +10,7 @@ const {
 
 router.get('/price', index);
 router.post('/price', create);
-router.put('/price', update);
+router.put('/price/:id', update);
 router.get('/price/:id', find);
 router.delete('/price/:id', destroy);
 

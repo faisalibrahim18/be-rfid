@@ -1,6 +1,7 @@
 const Linen = require('../../api/v1/linen/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
 const xlsx = require('xlsx');
+const Audit = require('../../api/v1/audit trail/model');
 
 const createLinen = async (req) => {
     const { name } = req.body;
@@ -13,6 +14,11 @@ const createLinen = async (req) => {
         name,
     })
 
+    await Audit.create({
+        task: 'Linen',
+        status: 'CREATE',
+        user: req.user.id
+    })
     return result;
 }
 
@@ -55,6 +61,12 @@ const updateLinen = async (req) => {
 
     if (!result) throw new NotFoundError(`Linen name id ${id} not found`);
 
+    await Audit.create({
+        task: `Linen updated ${id}`,
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
     return result;
 }
 
@@ -64,6 +76,12 @@ const deleteLinen = async (req) => {
     const result = await Linen.findByIdAndDelete({ _id: id })
 
     if (!result) throw new NotFoundError(`Linen name ${id} not found`);
+
+    await Audit.create({    
+        task: `Linen deleted ${id}`,
+        status: 'DELETE',
+        user: req.user.id
+    })
 
     return result;
 }
@@ -86,8 +104,6 @@ const countLinen = async () => {
 const countLinenByHospital = async (req) => {
     const  idHospital   = req.params.id;
     const Linen = await Linen.countDocuments({ hospital: idHospital })
-
-
 
     return result 
 }

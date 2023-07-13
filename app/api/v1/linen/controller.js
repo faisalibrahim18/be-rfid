@@ -13,6 +13,7 @@ const { StatusCodes } = require('http-status-codes');
 const xlsx = require('xlsx');
 
 const Linen = require('./model');
+const Audit = require('../audit trail/model')
 
 const exceljs = require('exceljs');
 const { NotFoundError, BadRequestError } = require('../../../errors');
@@ -148,6 +149,12 @@ const importExcel = async (req, res, next) => {
         }
 
         const result = await Linen.create(transformedData)
+
+        await Audit.create({
+            task: 'Linen imported',
+            status: 'CREATE',
+            user: req.user.id
+        })
 
         res.status(StatusCodes.OK).json({
             message: "import linen success",

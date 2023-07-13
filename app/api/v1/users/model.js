@@ -31,6 +31,11 @@ const userSchema = Schema(
             type: mongoose.Types.ObjectId,
             ref: 'Role',
             required: true
+        },
+        is_login: {
+            type: Boolean,
+            required: true,
+            default: false
         }
     },
     {
