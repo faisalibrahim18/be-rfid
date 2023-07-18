@@ -15,8 +15,9 @@ const createLinen = async (req) => {
         name,
     })
 
+    const data = result.map(x => x.code)
     await Audit.create({
-        task: 'Linen',
+        task: `Linen imported ${data}`,
         status: 'CREATE',
         user: req.user.id
     })
@@ -63,11 +64,10 @@ const updateLinen = async (req) => {
     if (!result) throw new NotFoundError(`Linen name id ${id} not found`);
 
     await Audit.create({
-        task: `Linen updated ${id}`,
+        task: `Linen updated ${result.code}`,
         status: 'UPDATE',
         user: req.user.id
     })
-
     return result;
 }
 
@@ -78,12 +78,11 @@ const deleteLinen = async (req) => {
 
     if (!result) throw new NotFoundError(`Linen name ${id} not found`);
 
-    await Audit.create({    
-        task: `Linen deleted ${id}`,
+    await Audit.create({
+        task: `Linen deleted ${result.code}`,
         status: 'DELETE',
         user: req.user.id
     })
-
     return result;
 }
 
