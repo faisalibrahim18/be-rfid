@@ -97,7 +97,7 @@ const chekingTracker = async (req) => {
     )
     if (!result) throw new NotFoundError('Tracker not found')
 
-    
+
     await Audit.create({
         task: 'Tacker status Check',
         status: 'UPDATE',
@@ -183,6 +183,8 @@ const acceptedTracker = async (req) => {
                 select: 'name'
             })
 
+
+
         if (Category) {
             item.category = Category.category.name;
         }
@@ -195,17 +197,61 @@ const acceptedTracker = async (req) => {
 
     const transformedformis = await Promise.all(transformedData);
 
-    const tracker = await Tracker.findById(id);
+    console.log(transformedformis)
 
+    const linen = await Linen.find()
+
+    const dataEpc = transformedformis.map(x => x.epc)
+    // console.log('dataepc==================>', dataEpc)
+    const getLinen = linen.map(x => x.epc)
+    // console.log('getEpcNih dekkks============>', getLinen)
+
+    const missingLinen = dataEpc.filter((epc) => !getLinen.includes(epc));
+    // console.log('missingLinen================================>', missingLinen)
+
+    if (missingLinen.length > 0) {
+        throw new NotFoundError(`Linen belum terdaftar data epc: ${missingLinen.join(', ')}`);
+    }
+
+    const tracker = await Tracker.findById(id);
 
     if (tracker.status === 'washing' || tracker.status === 'drying' || tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
 
+    // console.log('checking =================>', tracker.checking.amount) 
+    // console.log('count data acc =================>', count )
+
+    const status = 'accepted';
+    let dataNotif = '';
+
+    if (tracker.checking.amount !== count) {
+        dataNotif += `Jumlah data dari status check dan status ${status} berbeda`;
+
+        const checkingDataEPCs = tracker.checking.linen.map((item) => item.epc);
+        // console.log('Checking nih dekkk ===============>',checkingDataEPCs)
+        const acceptedDataEPCs = transformedformis.map((item) => item.epc);
+
+        const missingEPCs = checkingDataEPCs.filter((epc) => !acceptedDataEPCs.includes(epc));
+        const newEPCs = acceptedDataEPCs.filter((epc) => !checkingDataEPCs.includes(epc));
+
+        if (missingEPCs.length > 0) {
+            dataNotif += `Epc hilang di accepted status: ${missingEPCs.join(', ')}`;
+        }
+
+        if (newEPCs.length > 0) {
+            dataNotif += `Epc lebih di  accepted status: ${newEPCs.join(', ')}`;
+        }
+    }
+    dataNotif = dataNotif.trim();
+
+
+    // console.log('irrirrrrrrrr kau dek ==================>', dataNotif)
+
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
-            status: 'accepted',
+            status: status,
             accepted: {
                 name: name,
                 email: email,
@@ -213,7 +259,8 @@ const acceptedTracker = async (req) => {
                 amount: count,
                 heavy: heavy,
                 note: note,
-                linen: transformedformis
+                linen: transformedformis,
+                notif: dataNotif,
             }
         },
         { new: true, runValidators: true }
@@ -267,6 +314,22 @@ const washTracker = async (req) => {
         }
         return transformedItem
     })
+
+    const transformedformis = await Promise.all(transformedData);
+
+    const linen = await Linen.find()
+
+    const dataEpc = transformedformis.map(x => x.epc)
+    // console.log('dataepc==================>', dataEpc)
+    const getLinen = linen.map(x => x.epc)
+    // console.log('getEpcNih dekkks============>', getEpc)
+
+    const missingLinen = dataEpc.filter((epc) => !getLinen.includes(epc));
+    // console.log('missingLinen================================>', missingLinen)
+
+  if (missingLinen.length > 0) {
+        throw new NotFoundError(`Linen belum terdaftar data epc: ${missingLinen.join(', ')}`);
+    }
     const tracker = await Tracker.findById(id);
 
     if (!tracker) throw new NotFoundError('Tracker not found');
@@ -274,12 +337,32 @@ const washTracker = async (req) => {
     if (tracker.status === 'drying' || tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
-    const transformedformis = await Promise.all(transformedData);
+
+    const status = 'wash'
+    let dataNotif = ''
+    if (tracker.checking.amount !== count) {
+        dataNotif += `Jumlah data dari status check dan status ${status} berbeda`;
+
+        const checkingDataEPCs = tracker.checking.linen.map((item) => item.epc);
+        // console.log('Checking nih dekkk ===============>',checkingDataEPCs)
+        const acceptedDataEPCs = transformedformis.map((item) => item.epc);
+
+        const missingEPCs = checkingDataEPCs.filter((epc) => !acceptedDataEPCs.includes(epc));
+        const newEPCs = acceptedDataEPCs.filter((epc) => !checkingDataEPCs.includes(epc));
+
+        if (missingEPCs.length > 0) {
+            dataNotif += `Epc hilang di ${status} data: ${missingEPCs.join(', ')}`;
+        }
+
+        if (newEPCs.length > 0) {
+            dataNotif += `Epc lebih di  ${status} data: ${newEPCs.join(', ')}`;
+        }
+    }
 
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
-            status: 'wash',
+            status: status,
             wash: {
                 name: name,
                 email: email,
@@ -287,7 +370,8 @@ const washTracker = async (req) => {
                 amount: count,
                 heavy: heavy,
                 note: note,
-                linen: transformedformis
+                linen: transformedformis,
+                notif: dataNotif
             }
         },
         { new: true, runValidators: true }
@@ -313,7 +397,7 @@ const dryTracker = async (req) => {
         no_hp,
         note,
         heavy,
-        amount
+
     } = req.body;
 
     const workbook = xlsx.readFile(req.file.path);
@@ -344,6 +428,22 @@ const dryTracker = async (req) => {
 
     const transformedformis = await Promise.all(transformedData);
 
+    const linen = await Linen.find()
+
+    const dataEpc = transformedformis.map(x => x.epc)
+    // console.log('dataepc==================>', dataEpc)
+    const getLinen = linen.map(x => x.epc)
+    // console.log('getEpcNih dekkks============>', getEpc)
+
+    const missingLinen = dataEpc.filter((epc) => !getLinen.includes(epc));
+    // console.log('missingLinen================================>', missingLinen)
+
+    if (missingLinen.length > 0) {
+        throw new NotFoundError(`Linen belum terdaftar data epc: ${missingLinen.join(', ')}`);
+    }
+
+
+
     const tracker = await Tracker.findById(id);
 
     if (!tracker) throw new NotFoundError('Tracker not found');
@@ -351,10 +451,35 @@ const dryTracker = async (req) => {
     if (tracker.status === 'success', tracker.status === 'transit to hospital') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
+
+
+
+
+    const status = 'drying'
+    let dataNotif = ''
+    if (tracker.checking.amount !== count) {
+        dataNotif += `Jumlah data dari status check dan status ${status} berbeda `;
+
+        const checkingDataEPCs = tracker.checking.linen.map((item) => item.epc);
+        // console.log('Checking nih dekkk ===============>',checkingDataEPCs)
+        const acceptedDataEPCs = transformedformis.map((item) => item.epc);
+
+        const missingEPCs = checkingDataEPCs.filter((epc) => !acceptedDataEPCs.includes(epc));
+        const newEPCs = acceptedDataEPCs.filter((epc) => !checkingDataEPCs.includes(epc));
+
+        if (missingEPCs.length > 0) {
+            dataNotif += `Epc hilang di ${status} data: ${missingEPCs.join(', ')}`;
+        }
+
+        if (newEPCs.length > 0) {
+            dataNotif += `Epc lebih di  ${status} data: ${newEPCs.join(', ')}`;
+        }
+    }
+
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
-            status: 'drying',
+            status: status,
             dry: {
                 name: name,
                 email: email,
@@ -363,7 +488,8 @@ const dryTracker = async (req) => {
                 amount: count,
                 heavy: heavy,
                 note: note,
-                linen: transformedformis
+                linen: transformedformis,
+                notif: dataNotif
             }
         },
         { new: true, runValidators: true },
@@ -400,6 +526,8 @@ const deliveryToHospital = async (req) => {
     if (tracker.status === 'success') {
         throw new BadRequestError(`Cannot change status when status is ${tracker.status}`);
     }
+
+
 
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
@@ -453,12 +581,11 @@ const doneTracker = async (req) => {
 
         let counter = 0;
 
-        
-
         const transformedItem = {
             epc: item.EPC,
-            category: linen ? linen.category.name : null,
+            category: linen.category._id,
             counter: counter,
+            code: linen.code
         };
 
         if (linen) {
@@ -470,10 +597,10 @@ const doneTracker = async (req) => {
                     { _id: linen.hospital._id },
                 )
 
-                const getEpc = checkEpc.linen.map(x => x.epc);
+                const getEpc = checkEpc.linen.map(x => x.code);
                 
                 if (getEpc.includes(codeEpc)) throw new NotFoundError(`Linen sudah terdaftart di rumah sakit ${checkEpc.name}`);
-                
+                console.log(transformedItem)
                 await Hospital.findByIdAndUpdate(
                     { _id: linen.hospital._id },
                     {
@@ -489,7 +616,6 @@ const doneTracker = async (req) => {
         transformedData.push(transformedItem);
     }
 
-    console.log(transformedData)
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {
@@ -521,6 +647,16 @@ const doneTracker = async (req) => {
 const counterPlus = async (linen) => {
     try {
         linen.counter += 1;
+        linen.expireDate = null;
+
+        if (linen.counter >= 80) {
+            linen.status = '4';
+        } else if (linen.counter >= 40) {
+            linen.status = '3';
+        } else if (linen.counter >= 1) {
+            linen.status = '2';
+        }
+
         await linen.save();
         return linen.counter;
     } catch (error) {
@@ -549,6 +685,8 @@ const countTrackers = async () => {
 
     return result;
 }
+
+
 
 const exportWashTracker = async (req, res) => {
     const { id } = req.params;
@@ -616,8 +754,8 @@ const serahTerimaPdf = async (req) => {
 
 
     await page.pdf({
-        path: 'serahterima.pdf', 
-        format: 'A4', 
+        path: 'serahterima.pdf',
+        format: 'A4',
         printBackground: true,
     });
 
@@ -625,6 +763,9 @@ const serahTerimaPdf = async (req) => {
 
     return pdfPath;
 };
+
+
+
 
 
 module.exports = {
@@ -642,5 +783,3 @@ module.exports = {
     deliveryToHospital,
     serahTerimaPdf
 }
-
-

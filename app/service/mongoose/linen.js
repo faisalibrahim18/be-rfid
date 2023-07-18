@@ -2,6 +2,7 @@ const Linen = require('../../api/v1/linen/model');
 const { BadRequestError, NotFoundError } = require('../../errors');
 const xlsx = require('xlsx');
 const Audit = require('../../api/v1/audit trail/model');
+const cron = require('node-cron');
 
 const createLinen = async (req) => {
     const { name } = req.body;
@@ -24,7 +25,7 @@ const createLinen = async (req) => {
 
 const getAllLinen = async (req) => {
     const result = await Linen.find()
-        .select('epc category date hospital counter code')
+  
         .populate({
             path: 'category',
             select: 'name'
@@ -108,6 +109,41 @@ const countLinenByHospital = async (req) => {
     return result 
 }
 
+const checkExpiredLinen = async () => {
+    try {
+        console.log('Cron job untuk memeriksa linen kadaluarsa sedang berjalan.');
+
+        const expiredDate = new Date();
+        expiredDate.setDate(expiredDate.getDate() - 30);
+
+        // const now = new Date();
+        // const expiredDate = new Date(now.getTime() - 30 * 1000); 
+
+
+
+        const linenToUpdate = await Linen.find({
+            $or: [
+                { expireDate: { $exists: false } },
+                { expireDate: null }
+              ],
+              updatedAt: { $lt: expiredDate }
+        });
+
+        // Perbarui status linen yang kadaluarsa
+        await Linen.updateMany(
+            { _id: { $in: linenToUpdate.map((linen) => linen._id) } },
+            { 
+                expireDate: new Date(),
+                status: "5"
+            }
+        );
+    } catch (err) {
+        console.error('Error checking expired linen:', err);
+    }
+};
+
+// Menjadwalkan tugas untuk memeriksa dan memperbarui status linen yang kadaluarsa setiap 30 detik
+cron.schedule('*/60 * * * * *', checkExpiredLinen);
 
 module.exports = {
     createLinen,
@@ -117,5 +153,6 @@ module.exports = {
     deleteLinen,
     checkLinen,
     countLinen,
-    countLinenByHospital
+    countLinenByHospital,
+    checkExpiredLinen
 };

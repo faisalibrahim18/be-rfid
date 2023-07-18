@@ -3,14 +3,14 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const Audit = require('../../api/v1/audit trail/model');
 
 const createInventory = async (req, res) => {
-    const { kode, name, amount, status } = req.body;
+    const { kode, name, amount, status, alamat } = req.body;
 
     const checkKode = await Inventory.findOne({ kode: kode })
 
     if (checkKode) throw new BadRequestError(`Kode already exists`);
 
     const result = await Inventory.create({
-        kode, name, amount, status
+        kode, name, amount, status, alamat
     })
     await Audit.create({
         task: `Inventory created ${result.name}`,
@@ -22,7 +22,8 @@ const createInventory = async (req, res) => {
 
 const getAllInventory = async (req) => {
     const result = await Inventory.find()
-        .select('kode name amount status')
+        .sort({ createdAt: -1 })
+
 
     if (!result) throw new NotFoundError('Inventory not found');
 
@@ -33,7 +34,6 @@ const getOneInventory = async (req) => {
     const { id } = req.params;
 
     const result = await Inventory.findOne({ _id: id })
-        .select('kode name amount')
 
     if (!result) throw new NotFoundError(`No such inventory found for ${id}`);
 
@@ -42,7 +42,7 @@ const getOneInventory = async (req) => {
 
 const updateInventory = async (req, res) => {
     const { id } = req.params;
-    const { kode, name, amount, status } = req.body;
+    const { kode, name, amount, status, alamat } = req.body;
 
     const checkKode = await Inventory.findOne(
         {
@@ -50,7 +50,8 @@ const updateInventory = async (req, res) => {
             _id: { $ne: id },
             status,
             name,
-            amount
+            amount,
+            alamat
         },
     )
 
@@ -58,7 +59,7 @@ const updateInventory = async (req, res) => {
 
     const result = await Inventory.findByIdAndUpdate(
         { _id: id },
-        { kode, name, amount },
+        { kode, name, amount, status, alamat},
         { new: true, runValidators: true }
     )
     if (!result) throw new NotFoundError(`No such inventory found for ${id}`);
@@ -102,4 +103,4 @@ module.exports = {
     updateInventory,
     deleteInventory,
     countInventory
-}
+} 

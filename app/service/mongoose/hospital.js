@@ -37,6 +37,9 @@ const createHospital = async (req, res, next) => {
 const getAllHospital = async (req, res, next) => {
 
     const result = await Hospital.find()
+    .populate({
+        path: 'linen.category'
+    })
        
     if (!result) throw new NotFoundError('Hospital Not Found');
 
@@ -46,9 +49,10 @@ const getAllHospital = async (req, res, next) => {
 const getOneHospital = async (req, res, next) => {
     const { id } = req.params;
     const result = await Hospital.findOne({ _id: id })
-        .select(
-            '_id code name  number_phone  address '
-        )
+    .populate({
+        path: 'linen.category'
+    })
+    
     if (!result) throw new NotFoundError('Hospital Not Found');
     return result;
 }

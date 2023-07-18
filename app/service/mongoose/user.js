@@ -81,39 +81,41 @@ const getOneUsers = async (req) => {
 const updateUser = async (req) => {
     const { id } = req.params;
     const {
-        name,
-        username,
-        password,
-        email,
-        number_phone,
-        role 
+      name,
+      username,
+      password,
+      email,
+      number_phone,
+      role,
+      confirmPassword
     } = req.body;
-
+  
     const checkUsername = await User.findOne({
-        username,
-        _id: { $ne: id },
-    })
+      username,
+      _id: { $ne: id },
+    });
     if (checkUsername) throw new BadRequestError('username has been registered');
-
+  
     const checkNumberPhone = await User.findOne({
-        number_phone,
-        _id : { $ne: id },
-    })
-
+      number_phone,
+      _id: { $ne: id },
+    });
     if (checkNumberPhone) throw new BadRequestError('number phone has been registered');
-
-    
-    const hashedPassword = await bcrypt.hash(password, 12);
-
+    let hashedPassword; 
+    if (password) {
+        if (password !== confirmPassword) throw new BadRequestError('password does not match with confirmation password')
+      hashedPassword = await bcrypt.hash(password, 12);
+    }
+  
     const result = await User.findByIdAndUpdate(
-        { _id: id },
-        { name, username, password: hashedPassword, email, number_phone, role},
-        { new: true, runValidators: true }
+      id, 
+      { name, username, password: hashedPassword, email, number_phone, role }, 
+      { new: true, runValidators: true }
     );
     if (!result) throw new NotFoundError('User Not Found');
-
+  
     return result;
-}
+  };
 
 const deleteUser = async (req) => {
     const { id } = req.params;

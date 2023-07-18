@@ -9,10 +9,7 @@ const categorySchema = Schema(
             required: true,
             default: new Date()
         },
-        expired: {
-            type: Date,
-            required: true,
-        },
+       
         unit : {
             type: String,
             required: true

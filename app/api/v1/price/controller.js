@@ -47,10 +47,10 @@ const find = async (req, res, next) => {
 
 const update = async (req, res, next) => {
     try {
-
         const result = await updatePrice(req)
-
+        
         res.status(StatusCodes.OK).json({
+            message: 'Updated Price successfully',
             data: result
         })
     } catch (err) {

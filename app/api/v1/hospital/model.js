@@ -3,12 +3,13 @@ const { model, Schema } = mongoose;
 
 const linenSchema = Schema(
     {
-        epc: {
+        code: {
             type: String,
             required: true,
         },
         category: {
-            type: String,
+            type: mongoose.Types.ObjectId,
+            ref: 'Category',
             required: true,    
         }
     }
@@ -26,6 +27,9 @@ const hospitalSchema  = Schema(
         },
         linen: {
             type: [linenSchema]
+        },
+        unit: {
+
         }
     },
     { timestamps: true}

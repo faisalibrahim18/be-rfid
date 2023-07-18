@@ -18,7 +18,6 @@ const linenSchema = Schema(
         hospital: {
             type: mongoose.Types.ObjectId,
             ref: 'Hospital',
- 
         },
         date: {
             type: Date,
@@ -26,6 +25,15 @@ const linenSchema = Schema(
         counter:{
             type: Number,
             default: 0
+        },
+        expireDate: {
+            type: Date,
+          },
+        expiredInfo: {
+            type: String
+        },
+        status: {
+            type: String
         }
         
     },

@@ -14,6 +14,10 @@ const inventorySchema = Schema(
         status: {
             type: String,
             required: true
+        },
+        alamat: {
+            type: String,
+            required: true
         }
     },
     { timestamps: true}

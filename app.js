@@ -23,6 +23,8 @@ const privilegeRouter = require('./app/api/v1/privilege/router');
 const roleRouter = require('./app/api/v1/role/router');
 const priceRouter = require('./app/api/v1/price/router');
 const auditRouter = require('./app/api/v1/audit trail/router');
+const { checkExpiredLinen } = require('./app/service/mongoose/linen');
+checkExpiredLinen();
 
 const v1 = '/api/v1/rfid';
 

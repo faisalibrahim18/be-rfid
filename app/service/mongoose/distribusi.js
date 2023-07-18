@@ -7,7 +7,6 @@ const Invoice = require('../../api/v1/invoice/model');
 const Audit = require('../../api/v1/audit trail/model');
 const { createInvoice, generateUniqueTransactionNumber, HargaPerKG } = require('./invois')
 
-
 const createDistribusi = async (req, res, next) => {
     const {
         customer,
@@ -15,11 +14,8 @@ const createDistribusi = async (req, res, next) => {
         service,
         weight,
         note,
-        
+
     } = req.body;
-    
-
-
 
     const workbook = xlsx.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
@@ -47,14 +43,14 @@ const createDistribusi = async (req, res, next) => {
             item.category = Category.category.name;
 
             if (Category.hospital) {
-                // if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen milik rumah sakit lain')
+                if (Category.hospital._id.toString() !== customer) throw new BadRequestError('linen milik rumah sakit lain')
                 const checkEpc = await Hospital.findOne(
                     { _id: Category.hospital._id },
                 )
 
                 const getEpc = checkEpc.linen.map(x => x.epc);
-                
-                // if (!getEpc.includes(codeEpc)) throw new NotFoundError(`Linen ini bukan milik rumah sakit ${checkEpc.name}`);
+
+                if (!getEpc.includes(codeEpc)) throw new NotFoundError(`Linen ini bukan milik rumah sakit ${checkEpc.name}`);
 
                 await Hospital.findByIdAndUpdate(
                     { _id: Category.hospital._id },
@@ -75,9 +71,6 @@ const createDistribusi = async (req, res, next) => {
     })
     const transformedformis = await Promise.all(transformedData);
 
-    // audit log
-
-  
 
     const result = await Distribusi.create({
         customer,
@@ -92,16 +85,16 @@ const createDistribusi = async (req, res, next) => {
         invoice_id: null
     });
 
-    
+
+    const rumahsakit = await Hospital.findOne({ _id: result.customer })
     await Audit.create({
-        task: `Distribusi created ${result._id}`,
+        task: `Distribusi created ${rumahsakit.name}`,
         status: 'CREATE',
         user: req.user.id
     })
 
     return result;
 }
-
 const getAllDistribusi = async (req, res, next) => {
     const { startDate, endDate } = req.query;
     let condition = {};
@@ -123,7 +116,7 @@ const getAllDistribusi = async (req, res, next) => {
 
         .populate({
             path: 'status',
-            select: 'status checking transit accepted wash dry done'
+            select: 'status checking transit accepted wash dry done returned'
         })
         .populate({
             path: 'invoice_id'
@@ -146,7 +139,6 @@ const getOneDistribusi = async (req, res, next) => {
 
     return result
 }
-
 const updateDistribusi = async (req, res, next) => {
     const { id } = req.params;
     const {
@@ -187,45 +179,38 @@ const updateDistribusi = async (req, res, next) => {
     const result = await Distribusi.findByIdAndUpdate(
         { _id: id },
         {
-            customer,
-            category,
-            quality,
-            linen,
-            service,
+            
             status,
-            dateIn,
-            dateOut,
-            amount,
-            weight,
-            note,
+            
             invoice_id: invoice._id
         },
         { new: true, runValidators: true }
     );
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
+    const rumahsakit = await Hospital.findOne({ _id: result.customer })
 
     await Audit.create({
-        task: `Distribusi updated ${result._id}`,
+        task: `Distribusi updated ${rumahsakit.name}`,
         status: 'UPDATE',
         user: req.user.id
     })
 
     return result
 }
-
 const deleteDistrbusi = async (req, res, next) => {
     const { id } = req.params;
 
     const result = await Distribusi.findByIdAndDelete({ _id: id })
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
+    const rumahsakit = await Hospital.findOne({ _id: result.customer })
 
     await Audit.create({
-        task: `Distribusi deleted ${result._id}`,
+        task: `Distribusi deleted ${rumahsakit.name}`,
         status: 'UPDATE',
         user: req.user.id
-    })  
+    })
 
     return result
 }

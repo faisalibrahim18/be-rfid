@@ -3,14 +3,13 @@ const { NotFoundError, BadRequestError } = require('../../errors');
 const Audit = require('../../api/v1/audit trail/model');
 
 const createCategory = async (req) => {
-    const { name, unit, expired  } = req.body;
+    const { name, unit} = req.body;
     const checkName = await Category.findOne({ name: name })
 
     if (checkName) throw new BadRequestError(`Name Category has been created`);
 
     const result = await Category.create({
         name: name,
-        expired: expired,
         unit: unit
     })
 
@@ -27,7 +26,7 @@ const createCategory = async (req) => {
 const getAllCategory = async (req) => {
 
     const result = await Category.find()
-        .select('name unit expired date')
+        .select('name unit date')
 
     if (!result) throw new NotFoundError('Tidak ada Category');
 
@@ -38,7 +37,7 @@ const getOneCategory = async (req) => {
     const { id } = req.params;
 
     const result = await Category.findOne({ _id: id })
-        .select('name unit expired date')
+        .select('name unit date')
 
     if (!result) throw new NotFoundError(`Category dengan ${id} tidak ditemukan`);
 
@@ -47,7 +46,7 @@ const getOneCategory = async (req) => {
 
 const updateCategory = async (req) => {
     const { id } = req.params;
-    const { name, unit, expired  } = req.body;
+    const { name, unit } = req.body;
 
     const checkName = await Category.findOne({
         name,
@@ -59,7 +58,6 @@ const updateCategory = async (req) => {
         { _id: id },
         {
             name: name,
-            expired: expired,
             unit: unit
         },
         { new: true, runValidators: true }

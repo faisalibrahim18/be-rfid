@@ -9,7 +9,7 @@ const FindAll = async (req, res, next) => {
             path: 'user',
             select: '-password'
         })
-
+        .sort({ createdAt: -1 })
         if (!result.length) {
             throw new NotFoundError('No audit found')
         }

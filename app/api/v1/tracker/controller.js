@@ -75,7 +75,7 @@ const accepted = async (req, res, next) => {
         const result = await acceptedTracker(req);
 
         res.status(StatusCodes.OK).json({
-            messsage: 'Status Changed Successfully',
+            message: 'Status Changed Successfully',
             data: result
         })
     } catch (err) {
@@ -140,6 +140,7 @@ const backHospital = async (req, res, next) => {
         const result = await deliveryToHospital(req)
 
         res.status(StatusCodes.OK).json({
+            message: 'Status changed successfully',
             data: result
         })
     } catch (err) {

@@ -45,6 +45,9 @@ const chekingSchema = Schema(
         },
         linen: {
             type: [linenSchema]
+        },
+        notif:{
+            type: String,
         }
     },
 )
@@ -87,7 +90,7 @@ const transitSchema = Schema(
             default: new Date()
         }
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 
 const acceptSchema = Schema(
@@ -122,8 +125,12 @@ const acceptSchema = Schema(
         linen: {
             type: [linenSchema]
         }
+        ,
+        notif:{
+            type: String,
+        }
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 
 
@@ -161,8 +168,12 @@ const washSchema = Schema(
         linen: {
             type: [linenSchema]
         }
+        ,
+        notif:{
+            type: String,
+        }
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 const drySchema = Schema(
     {
@@ -197,11 +208,15 @@ const drySchema = Schema(
         linen: {
             type: [linenSchema]
         }
+        ,
+        notif:{
+            type: String,
+        }
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 
-const returnHospital = Schema(
+const returnSchema = Schema(
     {
         name: {
             type: String,
@@ -274,8 +289,12 @@ const doneSchema = Schema(
         linen: {
             type: [linenSchema]
         }
+        ,
+        notif:{
+            type: String,
+        }
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 
 const trackingSchema = Schema(
@@ -300,14 +319,14 @@ const trackingSchema = Schema(
             type: drySchema,
         }, 
         returned: {
-            type: returnHospital
+            type: returnSchema
         },
         done: {
             type: doneSchema,
         },
         
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 
 module.exports = model('Tracker', trackingSchema);

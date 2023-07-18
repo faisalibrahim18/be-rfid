@@ -19,7 +19,7 @@ const auditTrail = Schema(
         }
     },
     {
-        timestamp: true
+        timestamps: true
     }
 )
 

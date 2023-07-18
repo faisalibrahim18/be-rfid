@@ -117,11 +117,18 @@ const importExcel = async (req, res, next) => {
 
         if (!workbook) throw new BadRequestError('file required')
 
+        const duplicateData = [];
+
         for (const item of jsonData) {
             const existingLinen = await Linen.findOne({ epc: item.EPC });
             if (existingLinen) {
-                return res.status(StatusCodes.BAD_REQUEST).send({ message: 'Duplicate EPC' });
+                duplicateData.push(item.EPC);
             }
+        }
+
+        if (duplicateData.length > 0) {
+            // Jika ada data duplikat, kirimkan sebagai respons
+            return res.status(StatusCodes.BAD_REQUEST).send({ total:  duplicateData.length ,message: 'Duplicate EPC', data: duplicateData});
         }
 
         const transformedData = jsonData.map((item, index) => {
@@ -132,17 +139,19 @@ const importExcel = async (req, res, next) => {
                 date: new Date(),
                 category: category,
                 code: code,
-                hospital: hospital
+                hospital: hospital,
+                expiredDate: null,
+                status: '1',
             }
             return transformedItem
         })
-
+        console.log(transformedData)
         if (hospital) {
             await Hospital.findByIdAndUpdate(
                 { _id: hospital },
                 {
                     $inc: { stock: count },
-                    linen: transformedData 
+                    linen: transformedData
                 },
                 { new: true, runValidators: true }
             )
@@ -165,7 +174,6 @@ const importExcel = async (req, res, next) => {
         
     }
 }
-
 
 const exportExcel = async (req, res, next) => {
     try {
