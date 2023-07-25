@@ -11,6 +11,10 @@ const linenSchema = Schema(
             type: mongoose.Types.ObjectId,
             ref: 'Category',
             required: true,    
+        },
+        epc:{ 
+            type: String,
+            required: true,
         }
     }
 )

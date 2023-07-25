@@ -3,6 +3,7 @@ const { BadRequestError, NotFoundError } = require('../../errors');
 const xlsx = require('xlsx');
 const Audit = require('../../api/v1/audit trail/model');
 const cron = require('node-cron');
+const Hospital = require('../../api/v1/hospital/model');
 
 const createLinen = async (req) => {
     const { name } = req.body;
@@ -83,6 +84,19 @@ const deleteLinen = async (req) => {
         status: 'DELETE',
         user: req.user.id
     })
+
+    if (result.hospital) {
+        const hospital = await Hospital.findOneAndUpdate(
+            { _id: result.hospital },
+            {
+               $pull:  { linen: { epc: result.epc } }
+            },
+            { new: true }
+        );
+        hospital.stock -= 1;
+        await hospital.save(); 
+    }
+
     return result;
 }
 

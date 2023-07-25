@@ -116,12 +116,12 @@ const getAllDistribusi = async (req, res, next) => {
 
         .populate({
             path: 'status',
-            select: 'status checking transit accepted wash dry done returned'
         })
         .populate({
             path: 'invoice_id'
         })
-        .select('customer category linen quality service status dateIn dateOut amount weight note')
+        .sort({ createdAt: -1 })
+
 
     if (!result) throw new NotFoundError('Distribusi Not Found')
 
@@ -131,9 +131,18 @@ const getAllDistribusi = async (req, res, next) => {
 const getOneDistribusi = async (req, res, next) => {
     const { id } = req.params;
 
-    const result = await Distribusi.findOne({ _id: id }).
-    populate({
-        path: 'customer'
+    const result = await Distribusi.findOne({ _id: id })
+    .populate({
+        path: 'customer',
+        select: '_id name  number_phone  address'
+
+    })
+
+    .populate({
+        path: 'status',
+    })
+    .populate({
+        path: 'invoice_id'
     })
     if (!result) throw new NotFoundError('Distribusi id Not Found')
 
