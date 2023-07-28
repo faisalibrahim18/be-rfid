@@ -58,9 +58,12 @@ const distribusiSchema = Schema(
         },
         note : {
             type : String
+        },
+        code : {
+            type: String,
         }
     },
-    { timestamp: true }
+    { timestamps: true }
 )
 
 module.exports = model('Distribusi', distribusiSchema)

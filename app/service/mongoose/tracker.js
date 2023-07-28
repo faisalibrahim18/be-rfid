@@ -4,6 +4,8 @@ const xlsx = require('xlsx');
 const Linen = require('../../api/v1/linen/model');
 const Hospital = require('../../api/v1/hospital/model');
 const Audit = require('../../api/v1/audit trail/model');
+const Distribusi = require('../../api/v1/distribusi/model');
+const Invoice = require('../../api/v1/invoice/model');
 
 const ExcelJS = require('exceljs');
 const path = require('path')
@@ -327,7 +329,7 @@ const washTracker = async (req) => {
     const missingLinen = dataEpc.filter((epc) => !getLinen.includes(epc));
     // console.log('missingLinen================================>', missingLinen)
 
-  if (missingLinen.length > 0) {
+    if (missingLinen.length > 0) {
         throw new NotFoundError(`Linen belum terdaftar data epc: ${missingLinen.join(', ')}`);
     }
     const tracker = await Tracker.findById(id);
@@ -598,14 +600,14 @@ const doneTracker = async (req) => {
                 )
 
                 const getEpc = checkEpc.linen.map(x => x.code);
-                
+
                 if (getEpc.includes(codeEpc)) throw new NotFoundError(`Linen sudah terdaftart di rumah sakit ${checkEpc.name}`);
-                console.log(transformedItem)
+                // console.log(transformedItem)
                 await Hospital.findByIdAndUpdate(
                     { _id: linen.hospital._id },
                     {
-                        $inc: { stock: 1  },
-                        $push: { linen: transformedItem } 
+                        $inc: { stock: 1 },
+                        $push: { linen: transformedItem }
                     },
                     { new: true, runValidators: true }
                 )
@@ -616,6 +618,19 @@ const doneTracker = async (req) => {
         transformedData.push(transformedItem);
     }
 
+    const distrubusi = await Distribusi.findOne({ status: id });
+
+    await Invoice.findByIdAndUpdate(
+        {
+            _id: distrubusi.invoice_id
+        },
+        { 
+            is_deletable: true 
+        },
+        { 
+            new: true, runValidators: true
+        }
+    )
     const result = await Tracker.findByIdAndUpdate(
         { _id: id },
         {

@@ -36,7 +36,7 @@ const create = async (req, res, next) => {
 
 const index = async (req, res, next) => {
     try {
-        const result = await getAllLinen();
+        const result = await getAllLinen(req);
 
         res.status(StatusCodes.OK).json({
             data: result,
@@ -128,7 +128,7 @@ const importExcel = async (req, res, next) => {
 
         if (duplicateData.length > 0) {
             // Jika ada data duplikat, kirimkan sebagai respons
-            return res.status(StatusCodes.BAD_REQUEST).send({ total:  duplicateData.length ,message: 'Duplicate EPC', data: duplicateData});
+            return res.status(StatusCodes.BAD_REQUEST).send({ total:  duplicateData.length , msg: 'Duplicate EPC', data: duplicateData});
         }
 
         const transformedData = jsonData.map((item, index) => {
@@ -159,8 +159,9 @@ const importExcel = async (req, res, next) => {
 
         const result = await Linen.create(transformedData)
 
+        const data = result.map(x => x.code)
         await Audit.create({
-            task: 'Linen imported',
+            task: `Linen imported ${data}`,
             status: 'CREATE',
             user: req.user.id
         })
@@ -174,6 +175,7 @@ const importExcel = async (req, res, next) => {
         
     }
 }
+
 
 const exportExcel = async (req, res, next) => {
     try {

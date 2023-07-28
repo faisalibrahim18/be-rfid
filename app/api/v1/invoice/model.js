@@ -20,10 +20,17 @@ const invoisSchema = Schema(
         hospital: {
             type: mongoose.Types.ObjectId,
             ref: 'Hospital'
+        },
+        code_distribusi: {
+            type: String
+        },
+        is_deletable: {
+            type: Boolean,
+            default: false
         }
     },
     { 
-        timestamp: true
+        timestamps: true
     }
 )
 

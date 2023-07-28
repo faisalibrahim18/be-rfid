@@ -6,6 +6,8 @@ const Hospital = require('../../api/v1/hospital/model');
 const Invoice = require('../../api/v1/invoice/model');
 const Audit = require('../../api/v1/audit trail/model');
 const { createInvoice, generateUniqueTransactionNumber, HargaPerKG } = require('./invois')
+const Tracker = require('../../api/v1/tracker/model')
+
 
 const createDistribusi = async (req, res, next) => {
     const {
@@ -14,7 +16,6 @@ const createDistribusi = async (req, res, next) => {
         service,
         weight,
         note,
-
     } = req.body;
 
     const workbook = xlsx.readFile(req.file.path);
@@ -34,7 +35,6 @@ const createDistribusi = async (req, res, next) => {
                 select: 'name'
             }).populate({
                 path: 'hospital',
-                select: 'name'
             })
 
         if (!Category) throw new BadRequestError('Linen ada yang belum terdaftar')
@@ -72,7 +72,22 @@ const createDistribusi = async (req, res, next) => {
     const transformedformis = await Promise.all(transformedData);
 
 
+    const lastDistribusi = await Distribusi.findOne({}, {}, { sort: { 'code': -1 } });
+
+    let codeNumber = 1; 
+
+    if (lastDistribusi) {
+      
+        const lastCode = lastDistribusi.code;
+        codeNumber = parseInt(lastCode.slice(1), 10) + 1;
+    }
+
+    const code = `A${codeNumber.toString().padStart(6, '0')}`;
+
+    
+
     const result = await Distribusi.create({
+        code,
         customer,
         quality,
         linen: transformedformis,
@@ -85,8 +100,7 @@ const createDistribusi = async (req, res, next) => {
         invoice_id: null
     });
 
-
-    const rumahsakit = await Hospital.findOne({ _id: result.customer })
+const rumahsakit = await Hospital.findOne({ _id: result.customer })
     await Audit.create({
         task: `Distribusi created ${rumahsakit.name}`,
         status: 'CREATE',
@@ -95,6 +109,7 @@ const createDistribusi = async (req, res, next) => {
 
     return result;
 }
+
 const getAllDistribusi = async (req, res, next) => {
     const { startDate, endDate } = req.query;
     let condition = {};
@@ -137,7 +152,6 @@ const getOneDistribusi = async (req, res, next) => {
         select: '_id name  number_phone  address'
 
     })
-
     .populate({
         path: 'status',
     })
@@ -148,6 +162,55 @@ const getOneDistribusi = async (req, res, next) => {
 
     return result
 }
+
+const confirmDistribusi = async (req, res, next) => {
+    const { id } = req.params;
+    const distribusi = await Distribusi.findOne({ _id: id });
+
+    const berat = distribusi.weight;
+    
+    const hospital = distribusi.customer;
+
+   
+
+    // Create Transaction / Invoice
+    const noTransaction = await generateUniqueTransactionNumber(17)
+    const Harga = await HargaPerKG()
+
+    const price = berat * Harga;
+
+    const invoice = await Invoice.create({
+        transactionNumber: noTransaction,
+        price: price,
+        weight: berat,
+        hospital: hospital
+    })
+
+    const status = await Tracker.create({
+        status: 'processing'
+    })
+
+    // console.log('status', status)
+    const result = await Distribusi.findByIdAndUpdate(
+        { _id: id },
+        {
+            status: status._id,
+            invoice_id: invoice._id
+        },
+        { new: true, runValidators: true }
+    );
+
+    if (!result) throw new NotFoundError('Distribusi id Not Found')
+
+    await Audit.create({
+        task: `Distribusi statu confirm`,
+        status: 'UPDATE',
+        user: req.user.id
+    })
+
+    return result
+}
+
 const updateDistribusi = async (req, res, next) => {
     const { id } = req.params;
     const {
@@ -169,6 +232,7 @@ const updateDistribusi = async (req, res, next) => {
 
     const berat = distribusi.weight;
     const hospital = distribusi.customer;
+    const code = distribusi.code;
 
      // Create Transaction / Invoice
      const noTransaction = await generateUniqueTransactionNumber(17)
@@ -180,7 +244,8 @@ const updateDistribusi = async (req, res, next) => {
          transactionNumber: noTransaction,
          price: price,
          weight: berat,
-         hospital: hospital
+         hospital: hospital,
+         code_distribusi: code
      })
 
     
@@ -207,14 +272,80 @@ const updateDistribusi = async (req, res, next) => {
 
     return result
 }
+
 const deleteDistrbusi = async (req, res, next) => {
     const { id } = req.params;
+
+   
+    const distribusi = await Distribusi.findOne({ _id: id })
+    .populate({
+        path: 'status'
+    })
+    .populate({
+        path: 'customer'
+    })
+
+    if (!distribusi) throw new NotFoundError('Distribusi not found')
+    // console.log('customer.linen', distribusi.customer)
+    // console.log('distribusi.linen', distribusi.linen)
+
+
+
+    if (distribusi.status == null || !(distribusi.status.status === 'success')) {
+        const linenList = distribusi.linen;
+
+        const asyncTasks = [];
+
+        for (const item of linenList) {
+            const codeEpc = item.epc;
+            asyncTasks.push(
+                (async () => {
+
+                    const linen = await Linen.findOne({ epc: codeEpc }).populate('category').populate({
+                        path: 'hospital',
+                        select: 'name'
+                    });
+                    const transformedItem = {
+                        epc: item.epc,
+                        category: linen.category._id,
+                        code: linen.code
+                    }
+
+                    if (linen) {
+                        await Hospital.findByIdAndUpdate(
+                            { _id: distribusi.customer._id },
+                            {
+                                $inc: { stock: 1 },
+                                $push: { linen: transformedItem },
+                            },
+                            { new: true, runValidators: true }
+                        );
+                    }
+                })()
+            );
+        }
+
+        // Run all asynchronous tasks concurrently
+        await Promise.all(asyncTasks);
+    }
 
     const result = await Distribusi.findByIdAndDelete({ _id: id })
 
     if (!result) throw new NotFoundError('Distribusi id Not Found')
+
     const rumahsakit = await Hospital.findOne({ _id: result.customer })
 
+    if (!rumahsakit) throw new NotFoundError('rumahsakit tidak aad')
+
+    if (result.invoice_id){
+        const invoice = await Invoice.findOne({ _id: result.invoice_id });
+
+        if (invoice.is_deletable == false) {
+            await Invoice.deleteOne({ _id: invoice._id})
+        }  
+    }
+    
+ 
     await Audit.create({
         task: `Distribusi deleted ${rumahsakit.name}`,
         status: 'UPDATE',
@@ -232,4 +363,12 @@ const countDistrbusi = async (req, res, next) => {
     return result;
 }
 
-module.exports = { createDistribusi, getAllDistribusi, getOneDistribusi, updateDistribusi, deleteDistrbusi, countDistrbusi };
+module.exports = {
+    createDistribusi,
+    getAllDistribusi,
+    getOneDistribusi,
+    updateDistribusi,
+    deleteDistrbusi,
+    countDistrbusi,
+    confirmDistribusi
+};
