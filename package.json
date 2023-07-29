@@ -1,10 +1,9 @@
 {
   "name": "rfid",
   "version": "0.0.0",
-  "main"  : "app.js",
+ "private": true,
   "scripts": {
-      "start": "node app.js",
-      "dev": "nodemon app.js"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
