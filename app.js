@@ -32,6 +32,8 @@ const notFoundMiddleware = require('./app/middlewares/not-found');
 const handleErrorMiddleware = require('./app/middlewares/handle-error');
 
 app.set('view engine', 'ejs');
+// app.use(cors())
+// app.use(cors({ credentials: true }));
 app.use(
     cors({
         credentials: true,
