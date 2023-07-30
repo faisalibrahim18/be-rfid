@@ -4,7 +4,7 @@ const path = require('path')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads/');
+    cb(null, '/tmp');
   },
   filename: function (req, file, cb) {
     const currentDate = new Date();
@@ -49,7 +49,7 @@ const uploadAndDeleteMiddleware = (req, res, next) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ msg: err.message });
     } else if (err) {
-      return res.status(400).json({ msg: 'Unknown error occurred' });
+      return res.status(400).json({ msg: 'Unknown error occurred ' });
     } if (req.file) {
       // fs.unlink(path.join(__dirname, '..', '..',  'public', 'uploads', req.file.filename), function (error) {
       //   if (error) {
