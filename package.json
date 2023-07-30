@@ -1,7 +1,7 @@
 {
   "name": "rfid",
   "version": "0.0.0",
-  "private": true,
+ "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
     "build": "netlify deploy --prod"
