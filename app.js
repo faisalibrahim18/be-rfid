@@ -35,7 +35,7 @@ app.set('view engine', 'ejs');
 app.use(
     cors({
         credentials: true,
-        origin: "https://lms-rfid.netlify.app",
+        origin: "http://localhost:5173",
     }),
 );
 app.use(logger('dev'));
