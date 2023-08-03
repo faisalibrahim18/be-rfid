@@ -12,7 +12,7 @@ const signin = async (req, res, next) => {
         throw new BadRequestError('Please provide username and password')
     }
 
-    const result = await Users.findOne({ username: username })
+    // const result = await Users.findOne({ username: username })
 
     if (!result) {
         throw new UnauthenticatedError('Invalid credentials')

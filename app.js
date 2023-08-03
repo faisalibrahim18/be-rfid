@@ -32,8 +32,6 @@ const notFoundMiddleware = require('./app/middlewares/not-found');
 const handleErrorMiddleware = require('./app/middlewares/handle-error');
 
 app.set('view engine', 'ejs');
-// app.use(cors())
-// app.use(cors({ credentials: true }));
 app.use(
     cors({
         credentials: true,
@@ -50,7 +48,7 @@ app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
     res.status(200).json({
-        message: 'welcome to api rfid'
+        message: 'welcome to api LMS'
     })
 })
 
