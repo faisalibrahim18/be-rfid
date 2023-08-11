@@ -34,7 +34,7 @@ app.set('view engine', 'ejs');
 app.use(
     cors({
         credentials: true,
-        origin: "https://fe-bka.lifetech.co.id"
+        origin: "http://localhost:5173"
     }),
 );
 app.use(logger('dev'));
