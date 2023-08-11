@@ -6,21 +6,29 @@ const ejs = require('ejs');
 
 const app = express();
 const cors = require('cors');
-const allowedOrigins = ['http://localhost:5173'];
+// Enable CORS for a specific origin
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 
-// Middleware CORS
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Origin not allowed by CORS'));
-    }
-  },
-  credentials: true, 
-};
+// const allowedOrigins = ['http://localhost:5173'];
 
-app.use(cors(corsOptions))
+// // Middleware CORS
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Origin not allowed by CORS'));
+//     }
+//   },
+//   credentials: true, 
+// };
+
+// app.use(cors(corsOptions))
 
 const usersRouter = require('./app/api/v1/users/router');
 const signinRouter = require('./app/api/v1/auth/router');
