@@ -3,34 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const ejs = require('ejs');
-
-const app = express();
 const cors = require('cors');
-// Enable CORS for a specific origin
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true'); // Set to 'true'
+const app = express();
 
-  next();
-});
 
-// const allowedOrigins = ['http://localhost:5173'];
-
-// // Middleware CORS
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Origin not allowed by CORS'));
-//     }
-//   },
-//   credentials: true, 
-// };
-
-// app.use(cors(corsOptions))
 
 const usersRouter = require('./app/api/v1/users/router');
 const signinRouter = require('./app/api/v1/auth/router');
@@ -55,13 +31,13 @@ const v1 = '/api/v1/rfid';
 const notFoundMiddleware = require('./app/middlewares/not-found');
 const handleErrorMiddleware = require('./app/middlewares/handle-error');
 
-// app.set('view engine', 'ejs');
-// app.use(
-//     cors({
-//         credentials: true,
-//         origin: "http://localhost:5173/"
-//     }),
-// );
+app.set('view engine', 'ejs');
+app.use(
+    cors({
+      credentials: true,
+      origin: 'http://localhost:5173', // Origin harus tanpa '/' di akhir
+    })
+  );
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
