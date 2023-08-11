@@ -3,9 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const ejs = require('ejs');
-
-const app = express();
 const cors = require('cors');
+const app = express();
+
+
 
 const usersRouter = require('./app/api/v1/users/router');
 const signinRouter = require('./app/api/v1/auth/router');
@@ -33,10 +34,10 @@ const handleErrorMiddleware = require('./app/middlewares/handle-error');
 app.set('view engine', 'ejs');
 app.use(
     cors({
-        credentials: true,
-        origin: "https://fe-bka.lifetech.co.id"
-    }),
-);
+      credentials: true,
+      origin: 'http://localhost:5173', // Origin harus tanpa '/' di akhir
+    })
+  );
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
