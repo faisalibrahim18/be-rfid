@@ -1,7 +1,7 @@
 {
   "name": "rfid",
   "version": "0.0.0",
- "private": true,
+  "private": true,
   "scripts": {
     "start": "nodemon ./bin/www"
   },
@@ -19,6 +19,7 @@
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^9.0.0",
     "link": "^1.5.1",
+    "mongodb": "^5.7.0",
     "mongoose": "^7.0.3",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1",

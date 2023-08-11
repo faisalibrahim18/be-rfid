@@ -127,7 +127,7 @@ const checkExpiredLinen = async () => {
         console.log('Cron job untuk memeriksa linen kadaluarsa sedang berjalan.');
 
         const expiredDate = new Date();
-        expiredDate.setDate(expiredDate.getDate() - 30);
+        expiredDate.setDate(expiredDate.getDate() - 30 );
 
         // const now = new Date();
         // const expiredDate = new Date(now.getTime() - 30 * 1000); 
