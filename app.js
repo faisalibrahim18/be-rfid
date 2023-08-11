@@ -6,6 +6,21 @@ const ejs = require('ejs');
 
 const app = express();
 const cors = require('cors');
+const allowedOrigins = ['http://localhost:5173'];
+
+// Middleware CORS
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
+  credentials: true, 
+};
+
+app.use(cors(corsOptions))
 
 const usersRouter = require('./app/api/v1/users/router');
 const signinRouter = require('./app/api/v1/auth/router');
@@ -30,13 +45,13 @@ const v1 = '/api/v1/rfid';
 const notFoundMiddleware = require('./app/middlewares/not-found');
 const handleErrorMiddleware = require('./app/middlewares/handle-error');
 
-app.set('view engine', 'ejs');
-app.use(
-    cors({
-        credentials: true,
-        origin: "http://localhost:5173/"
-    }),
-);
+// app.set('view engine', 'ejs');
+// app.use(
+//     cors({
+//         credentials: true,
+//         origin: "http://localhost:5173/"
+//     }),
+// );
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
