@@ -34,7 +34,7 @@ app.set('view engine', 'ejs');
 app.use(
     cors({
         credentials: true,
-        origin: "https://lms-rfid.netlify.app",    
+        origin: "https://fe-bka.lifetech.co.id"
     }),
 );
 app.use(logger('dev'));
